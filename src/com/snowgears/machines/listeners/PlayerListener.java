@@ -5,10 +5,12 @@ import com.snowgears.machines.Machine;
 import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 public class PlayerListener implements Listener{
@@ -35,13 +37,65 @@ public class PlayerListener implements Listener{
                 final Machine machine = new Machine(machineType, player.getUniqueId(), event.getBlock().getLocation());
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {
-                        machine.create();
+                        if(machine.create()){
+                            //if machine creation was successful, save the machine in handler
+                            plugin.getMachineHandler().addMachine(machine);
+                        }
                     }
                 }, 2L);
             }
             else{
                 player.sendMessage(ChatColor.DARK_RED+"You do not have permission to use this machine.");
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockBreak(BlockBreakEvent event){
+        if(event.isCancelled())
+            return;
+        Player player = event.getPlayer();
+
+        boolean brokeBase = false;
+
+        Machine machine = null;
+        if(event.getBlock().getType() == Material.LEVER){
+            machine = plugin.getMachineHandler().getMachineByLever(event.getBlock().getLocation());
+        }
+        else {
+            machine = plugin.getMachineHandler().getMachine(event.getBlock().getLocation());
+            if(machine == null){
+                machine = plugin.getMachineHandler().getMachine(event.getBlock().getLocation().clone().add(0,-1,0));
+            }
+            else{
+                brokeBase = true;
+            }
+        }
+
+        if(machine == null)
+            return;
+
+        if(brokeBase) {
+            //player is removing their own machine
+            if(machine.getOwner().getUniqueId().equals(player.getUniqueId())){
+                machine.remove(true);
+            }
+            //someone is trying to break another player's machine
+            else{
+                //the player has operator permissions
+                if (player.isOp() || (plugin.usePerms() && player.hasPermission("machines.operator"))) {
+                    machine.remove(true);
+                }
+                else{
+                    event.setCancelled(true);
+                    player.sendMessage(ChatColor.DARK_RED+"You do not have permission to destroy this machine.");
+                }
+            }
+        }
+        //the player tried to break a part of the machine that wasn't the base
+        else{
+            event.setCancelled(true);
+            player.sendMessage(ChatColor.RED+"You must break the base of the machine to remove it.");
         }
     }
 }

@@ -20,6 +20,7 @@ public class Machines extends JavaPlugin {
 
     private PlayerListener playerListener = new PlayerListener(this);
     private MachineData machineData = new MachineData(this);
+    private MachineHandler machineHandler;
 
 
 
@@ -31,6 +32,7 @@ public class Machines extends JavaPlugin {
     public void onEnable() {
         plugin = this;
 
+        machineHandler = new MachineHandler(this);
         getServer().getPluginManager().registerEvents(playerListener, this);
 
         File configFile = new File(getDataFolder(), "config.yml");
@@ -74,6 +76,9 @@ public class Machines extends JavaPlugin {
     }
     public MachineData getMachineData(){
         return machineData;
+    }
+    public MachineHandler getMachineHandler(){
+        return machineHandler;
     }
 
     private void copy(InputStream in, File file) {

@@ -44,6 +44,10 @@ public class Machine {
         return false;
     }
 
+    public MachineType getType(){
+        return type;
+    }
+
     public Player getOwner(){
         return Bukkit.getPlayer(owner);
     }
@@ -85,10 +89,14 @@ public class Machine {
         return true;
     }
 
-    public boolean remove(){
+    public boolean remove(boolean dropInventory){
+        if(dropInventory) {
+            //TODO you will want a method in machine to get relavent inventory items to drop on the ground
+        }
         leverLocation.getBlock().setType(Material.AIR);
         topLocation.getBlock().setType(Material.AIR);
         baseLocation.getBlock().setType(Material.AIR);
+        Machines.getPlugin().getMachineHandler().removeMachine(this);
         return true;
     }
 
