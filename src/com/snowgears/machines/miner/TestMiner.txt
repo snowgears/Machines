@@ -1,0 +1,2 @@
+student: Tanner Embry, 913351817
+notes: The floating point bitwise functions were difficult to grasp at first but after visiting TA office hours they made a lot more sense.

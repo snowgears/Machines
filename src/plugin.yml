@@ -1,0 +1,22 @@
+name: Machines
+author: Tanner Embry
+description: Build and use different machines in Minecraft!
+version: 0.1
+main: com.snowgears.machines.Machines
+permissions:
+    machines.gravity.use:
+        description: Allows player to use gravity machines
+        default: op
+    machines.miner.use:
+        description: Allows player to use gravity machines
+        default: op
+    machines.pump.use:
+        description: Allows player to use gravity machines
+        default: op
+    gravitymachine.give:
+        description: Allows player to use /gravity give
+        default: op
+commands:
+   machines:
+      description: Different commands pertaining to plugin
+      usage: /<command>
