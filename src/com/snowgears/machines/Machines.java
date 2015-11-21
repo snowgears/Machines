@@ -16,8 +16,10 @@ public class Machines extends JavaPlugin {
     private static Machines plugin;
     private YamlConfiguration config;
 
+    private boolean usePerms = false;
+
     private PlayerListener playerListener = new PlayerListener(this);
-    private MachineData machineData = new MachineData();
+    private MachineData machineData = new MachineData(this);
 
 
 
@@ -37,6 +39,9 @@ public class Machines extends JavaPlugin {
             copy(getResource("config.yml"), configFile);
         }
         config = YamlConfiguration.loadConfiguration(configFile);
+
+
+        usePerms = config.getBoolean("usePermissions");
     }
 
     @Override
@@ -49,7 +54,8 @@ public class Machines extends JavaPlugin {
         if (cmd.getName().equalsIgnoreCase("machines")) {
             if (args.length == 0) {
                 sender.sendMessage("[Machines] Available Commands:");
-                sender.sendMessage("   /machine list");
+                sender.sendMessage("   /machines list");
+                sender.sendMessage("   /machines give");
             } else if (args.length == 1) {
                 if(args[0].equalsIgnoreCase("give")) {
                     Player player = (Player)sender;
@@ -63,6 +69,9 @@ public class Machines extends JavaPlugin {
         return true;
     }
 
+    public boolean usePerms() {
+        return usePerms;
+    }
     public MachineData getMachineData(){
         return machineData;
     }

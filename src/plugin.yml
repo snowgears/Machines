@@ -13,8 +13,8 @@ permissions:
     machines.pump.use:
         description: Allows player to use gravity machines
         default: op
-    gravitymachine.give:
-        description: Allows player to use /gravity give
+    machines.operator:
+        description: Allows all operator functionality within the plugin
         default: op
 commands:
    machines:

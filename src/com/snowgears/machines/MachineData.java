@@ -3,6 +3,7 @@ package com.snowgears.machines;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
@@ -13,6 +14,8 @@ import java.util.Map;
 
 public class MachineData {
 
+    private Machines plugin;
+
     private HashMap<MachineType,MaterialData> machineBaseMaterials = new HashMap<MachineType, MaterialData>();
     private HashMap<MachineType,MaterialData> machineTopMaterials = new HashMap<MachineType, MaterialData>();
 
@@ -21,10 +24,12 @@ public class MachineData {
 
     private HashMap<MachineType, ItemStack> machineItems = new HashMap<MachineType, ItemStack>();
 
-    public MachineData(){
+    public MachineData(Machines instance){
+        plugin = instance;
         initMachineMaterials();
         initMaterialsIgnored();
         initMachineItems();
+        initMachineRecipes();
     }
 
     public MaterialData getInitialBaseMaterial(MachineType type){
@@ -53,7 +58,7 @@ public class MachineData {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("deprecation")
     private void initMachineMaterials(){
         machineBaseMaterials.put(MachineType.GRAVITY, new MaterialData(Material.ENDER_STONE));
         machineTopMaterials.put(MachineType.GRAVITY, new MaterialData(Material.BEACON));
@@ -117,5 +122,37 @@ public class MachineData {
         pumpMeta.setLore(pumpLore);
         pump.setItemMeta(pumpMeta);
         machineItems.put(MachineType.PUMP, pump);
+    }
+
+    private void initMachineRecipes(){
+        //gravity machine
+        ShapedRecipe gravityRecipe = new ShapedRecipe(machineItems.get(MachineType.GRAVITY))
+                .shape("RBR", "RFR", "PEP")
+                .setIngredient('R', Material.BLAZE_ROD)
+                .setIngredient('B', Material.BEACON)
+                .setIngredient('F', Material.FURNACE)
+                .setIngredient('P', Material.ENDER_PEARL)
+                .setIngredient('E', Material.ENDER_STONE);
+        plugin.getServer().addRecipe(gravityRecipe);
+
+        //mining machine
+        ShapedRecipe minerRecipe = new ShapedRecipe(machineItems.get(MachineType.MINER))
+                .shape("RPR", "RFR", "IOI")
+                .setIngredient('R', Material.BLAZE_ROD)
+                .setIngredient('P', Material.PISTON_BASE)
+                .setIngredient('F', Material.FURNACE)
+                .setIngredient('I', Material.IRON_PICKAXE)
+                .setIngredient('O', Material.OBSIDIAN);
+        plugin.getServer().addRecipe(minerRecipe);
+
+        //pump
+        ShapedRecipe pumpRecipe = new ShapedRecipe(machineItems.get(MachineType.PUMP))
+                .shape("RDR", "RFR", "BSB")
+                .setIngredient('R', Material.BLAZE_ROD)
+                .setIngredient('D', Material.DISPENSER)
+                .setIngredient('F', Material.FURNACE)
+                .setIngredient('B', Material.BUCKET)
+                .setIngredient('S', Material.SPONGE);
+        plugin.getServer().addRecipe(pumpRecipe);
     }
 }

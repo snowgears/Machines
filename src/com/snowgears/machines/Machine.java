@@ -52,6 +52,18 @@ public class Machine {
         return inventory;
     }
 
+    public Location getBaseLocation(){
+        return baseLocation;
+    }
+
+    public Location getTopLocation(){
+        return topLocation;
+    }
+
+    public Location getLeverLocation(){
+        return leverLocation;
+    }
+
     @SuppressWarnings("deprecation")
     public boolean create(){
         if(leverLocation == null)
@@ -69,14 +81,6 @@ public class Machine {
         Block leverBlock = leverLocation.getBlock();
         leverBlock.setType(Material.LEVER);
         setDirectionOfLever(leverBlock, baseLocation.getBlock().getFace(leverBlock));
-//        Lever lever = (Lever)leverBlock.getState().getData();
-//        BlockFace leverFacing = baseLocation.getBlock().getFace(leverBlock);
-//        System.out.println(""+leverFacing.toString());
-//        //leverFacing = leverLocation.getBlock().getFace(baseLocation.getBlock());
-//        lever.setFacingDirection(leverFacing);
-//        leverBlock.getState().setData(lever);
-//        leverBlock.getState().update();
-
 
         return true;
     }
@@ -101,7 +105,7 @@ public class Machine {
     }
 
     @SuppressWarnings("deprecation")
-    private void setDirectionOfLever(Block lever, BlockFace bf){
+    protected void setDirectionOfLever(Block lever, BlockFace bf){
         if(bf == BlockFace.NORTH)
             lever.setData((byte)4);
         else if(bf == BlockFace.EAST)

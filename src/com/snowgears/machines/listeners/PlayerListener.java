@@ -4,6 +4,7 @@ package com.snowgears.machines.listeners;
 import com.snowgears.machines.Machine;
 import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,7 +19,7 @@ public class PlayerListener implements Listener{
         plugin = instance;
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         if(event.isCancelled())
             return;
@@ -27,13 +28,20 @@ public class PlayerListener implements Listener{
         if(machineType != null){
             event.setCancelled(true);
 
-            final Machine machine = new Machine(machineType, player.getUniqueId(), event.getBlock().getLocation());
-
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    machine.create();
-                }
-            }, 2L);
+            //if using permissions, check that the player is allowed
+            String permString = "machines."+machineType.toString().toLowerCase()+".use";
+            if(!plugin.usePerms() || (player.hasPermission("machines.operator") || player.hasPermission(permString))) {
+                //setup the machine
+                final Machine machine = new Machine(machineType, player.getUniqueId(), event.getBlock().getLocation());
+                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                    public void run() {
+                        machine.create();
+                    }
+                }, 2L);
+            }
+            else{
+                player.sendMessage(ChatColor.DARK_RED+"You do not have permission to use this machine.");
+            }
         }
     }
 }
