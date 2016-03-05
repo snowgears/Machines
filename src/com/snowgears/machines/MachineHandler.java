@@ -3,17 +3,9 @@ package com.snowgears.machines;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Lever;
-import org.bukkit.material.Sign;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 public class MachineHandler {
@@ -43,9 +35,9 @@ public class MachineHandler {
             machine = plugin.getMachineHandler().getMachineByLever(loc);
         }
         else {
-            machine = plugin.getMachineHandler().getMachine(loc);
+            machine = plugin.getMachineHandler().getMachineByBase(loc);
             if(machine == null){
-                machine = plugin.getMachineHandler().getMachine(loc.clone().add(0,-1,0));
+                machine = plugin.getMachineHandler().getMachineByBase(loc.clone().add(0,-1,0));
             }
         }
         return machine;

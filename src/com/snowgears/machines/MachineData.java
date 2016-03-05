@@ -9,7 +9,6 @@ import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MachineData {
@@ -60,11 +59,11 @@ public class MachineData {
 
     @SuppressWarnings("deprecation")
     private void initMachineMaterials(){
-        machineBaseMaterials.put(MachineType.GRAVITY, new MaterialData(Material.ENDER_STONE));
-        machineTopMaterials.put(MachineType.GRAVITY, new MaterialData(Material.BEACON));
+        machineBaseMaterials.put(MachineType.ANTIGRAV, new MaterialData(Material.ENDER_STONE));
+        machineTopMaterials.put(MachineType.ANTIGRAV, new MaterialData(Material.BEACON));
 
-        machineBaseMaterials.put(MachineType.MINER, new MaterialData(Material.OBSIDIAN));
-        machineTopMaterials.put(MachineType.MINER, new MaterialData(Material.PISTON_BASE, (byte)1)); //piston:BlockFace.UP
+        machineBaseMaterials.put(MachineType.DRILL, new MaterialData(Material.OBSIDIAN));
+        machineTopMaterials.put(MachineType.DRILL, new MaterialData(Material.PISTON_BASE, (byte)1)); //piston:BlockFace.UP
 
         machineBaseMaterials.put(MachineType.PUMP, new MaterialData(Material.SPONGE, (byte)1)); //WET_SPONGE
         machineTopMaterials.put(MachineType.PUMP, new MaterialData(Material.DISPENSER, (byte)1)); //dispenser:BlockFace.UP
@@ -90,7 +89,7 @@ public class MachineData {
     }
 
     private void initMachineItems(){
-        //gravity machine
+        //antigrav machine
         ItemStack gravityMachine = new ItemStack(Material.BEACON);
         ItemMeta gravityMeta = gravityMachine.getItemMeta();
         gravityMeta.setDisplayName(ChatColor.GOLD+"Anti-Grav Machine");
@@ -99,7 +98,7 @@ public class MachineData {
         gravityLore.add(ChatColor.GRAY+"Requires fuel");
         gravityMeta.setLore(gravityLore);
         gravityMachine.setItemMeta(gravityMeta);
-        machineItems.put(MachineType.GRAVITY, gravityMachine);
+        machineItems.put(MachineType.ANTIGRAV, gravityMachine);
 
         //mining machine
         ItemStack miningMachine = new ItemStack(Material.PISTON_BASE);
@@ -110,7 +109,7 @@ public class MachineData {
         miningLore.add(ChatColor.GRAY+"Requires fuel");
         miningMeta.setLore(miningLore);
         miningMachine.setItemMeta(miningMeta);
-        machineItems.put(MachineType.MINER, miningMachine);
+        machineItems.put(MachineType.DRILL, miningMachine);
 
         //pump
         ItemStack pump = new ItemStack(Material.DISPENSER);
@@ -125,8 +124,8 @@ public class MachineData {
     }
 
     private void initMachineRecipes(){
-        //gravity machine
-        ShapedRecipe gravityRecipe = new ShapedRecipe(machineItems.get(MachineType.GRAVITY))
+        //antigrav machine
+        ShapedRecipe gravityRecipe = new ShapedRecipe(machineItems.get(MachineType.ANTIGRAV))
                 .shape("RBR", "RFR", "PEP")
                 .setIngredient('R', Material.BLAZE_ROD)
                 .setIngredient('B', Material.BEACON)
@@ -136,7 +135,7 @@ public class MachineData {
         plugin.getServer().addRecipe(gravityRecipe);
 
         //mining machine
-        ShapedRecipe minerRecipe = new ShapedRecipe(machineItems.get(MachineType.MINER))
+        ShapedRecipe minerRecipe = new ShapedRecipe(machineItems.get(MachineType.DRILL))
                 .shape("RPR", "RFR", "IOI")
                 .setIngredient('R', Material.BLAZE_ROD)
                 .setIngredient('P', Material.PISTON_BASE)

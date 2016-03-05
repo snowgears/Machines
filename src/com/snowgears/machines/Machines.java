@@ -1,13 +1,18 @@
 package com.snowgears.machines;
 
 import com.snowgears.machines.listeners.PlayerListener;
+import com.snowgears.machines.pump.Pump;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public class Machines extends JavaPlugin {
@@ -44,6 +49,9 @@ public class Machines extends JavaPlugin {
 
 
         usePerms = config.getBoolean("usePermissions");
+
+        Machine m = new Pump(null, null);
+        m.create();
     }
 
     @Override
@@ -61,8 +69,8 @@ public class Machines extends JavaPlugin {
             } else if (args.length == 1) {
                 if(args[0].equalsIgnoreCase("give")) {
                     Player player = (Player)sender;
-                    player.getInventory().addItem(machineData.getItem(MachineType.GRAVITY));
-                    player.getInventory().addItem(machineData.getItem(MachineType.MINER));
+                    player.getInventory().addItem(machineData.getItem(MachineType.ANTIGRAV));
+                    player.getInventory().addItem(machineData.getItem(MachineType.DRILL));
                     player.getInventory().addItem(machineData.getItem(MachineType.PUMP));
                 }
             }

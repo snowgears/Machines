@@ -4,6 +4,9 @@ package com.snowgears.machines.listeners;
 import com.snowgears.machines.Machine;
 import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
+import com.snowgears.machines.antigrav.AntiGrav;
+import com.snowgears.machines.drill.Drill;
+import com.snowgears.machines.pump.Pump;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,8 +36,23 @@ public class PlayerListener implements Listener{
             //if using permissions, check that the player is allowed
             String permString = "machines."+machineType.toString().toLowerCase()+".use";
             if(!plugin.usePerms() || (player.hasPermission("machines.operator") || player.hasPermission(permString))) {
+
                 //setup the machine
-                final Machine machine = new Machine(machineType, player.getUniqueId(), event.getBlock().getLocation());
+                final Machine machine;
+                switch(machineType){
+                    case ANTIGRAV:
+                        machine = new AntiGrav(player.getUniqueId(), event.getBlock().getLocation());
+                        break;
+                    case DRILL:
+                        machine = new Drill(player.getUniqueId(), event.getBlock().getLocation());
+                        break;
+                    case PUMP:
+                        machine = new Pump(player.getUniqueId(), event.getBlock().getLocation());
+                        break;
+                    default:
+                        return;
+                }
+
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {
                         if(machine.create()){

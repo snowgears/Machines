@@ -5,13 +5,13 @@ version: 0.1
 main: com.snowgears.machines.Machines
 permissions:
     machines.gravity.use:
-        description: Allows player to use gravity machines
+        description: Allows player to use antigrav machines
         default: op
     machines.miner.use:
-        description: Allows player to use gravity machines
+        description: Allows player to use antigrav machines
         default: op
     machines.pump.use:
-        description: Allows player to use gravity machines
+        description: Allows player to use antigrav machines
         default: op
     machines.operator:
         description: Allows all operator functionality within the plugin
