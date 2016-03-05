@@ -49,9 +49,6 @@ public class Machines extends JavaPlugin {
 
 
         usePerms = config.getBoolean("usePermissions");
-
-        Machine m = new Pump(null, null);
-        m.create();
     }
 
     @Override
@@ -72,6 +69,10 @@ public class Machines extends JavaPlugin {
                     player.getInventory().addItem(machineData.getItem(MachineType.ANTIGRAV));
                     player.getInventory().addItem(machineData.getItem(MachineType.DRILL));
                     player.getInventory().addItem(machineData.getItem(MachineType.PUMP));
+                }
+                else if(args[0].equalsIgnoreCase("list")) {
+                    Player player = (Player)sender;
+                    player.sendMessage("You own "+machineHandler.getNumberOfMachines(player)+" of the "+machineHandler.getNumberOfMachines()+" machines registered on this server.");
                 }
             }
         }

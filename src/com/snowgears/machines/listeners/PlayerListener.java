@@ -8,13 +8,16 @@ import com.snowgears.machines.antigrav.AntiGrav;
 import com.snowgears.machines.drill.Drill;
 import com.snowgears.machines.pump.Pump;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerListener implements Listener{
 
@@ -81,7 +84,7 @@ public class PlayerListener implements Listener{
             machine = plugin.getMachineHandler().getMachineByLever(event.getBlock().getLocation());
         }
         else {
-            machine = plugin.getMachineHandler().getMachine(event.getBlock().getLocation());
+            machine = plugin.getMachineHandler().getMachineByBase(event.getBlock().getLocation());
             if(machine == null){
                 machine = plugin.getMachineHandler().getMachine(event.getBlock().getLocation().clone().add(0,-1,0));
             }
@@ -114,6 +117,26 @@ public class PlayerListener implements Listener{
         else{
             event.setCancelled(true);
             player.sendMessage(ChatColor.RED+"You must break the base of the machine to remove it.");
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockClick(PlayerInteractEvent event) {
+        if (event.isCancelled())
+            return;
+        Player player = event.getPlayer();
+
+        if(event.getAction() == Action.RIGHT_CLICK_BLOCK){
+            Location clicked = event.getClickedBlock().getLocation();
+            Machine machine = plugin.getMachineHandler().getMachineByBase(clicked);
+            if(machine != null){
+                player.openInventory(machine.getInventory());
+                event.setCancelled(true);
+            }
+            //TODO rotate machine here
+            //if(machine == null)
+            //machine = getMachine(clicked)
+            //if not null, rotate
         }
     }
 }
