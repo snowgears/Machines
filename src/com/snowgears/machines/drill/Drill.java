@@ -6,9 +6,8 @@ import com.snowgears.machines.Machines;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.block.BlockFace;
 
 import java.util.UUID;
 
@@ -17,10 +16,11 @@ public class Drill extends Machine {
 
     public Drill(UUID owner, Location baseLocation){
         this.owner = owner;
-        this.baseLocation = baseLocation;
-        this.topLocation = baseLocation.clone().add(0,1,0);
+        this.topLocation = baseLocation;
+        this.baseLocation = baseLocation.clone().add(0,1,0);
+        this.facing = BlockFace.DOWN;
 
-        calculateLeverLocation(baseLocation);
+        calculateLeverLocation(this.baseLocation);
         inventory = Bukkit.createInventory(Bukkit.getPlayer(owner), 9, "Drill");
     }
 
@@ -49,7 +49,7 @@ public class Drill extends Machine {
         //before building top block, check that the location is clear
         if(Machines.getPlugin().getMachineData().isIgnoredMaterial(topLocation.getBlock().getType())) {
             this.topLocation.getBlock().setType(Material.PISTON_BASE);
-            this.topLocation.getBlock().setData((byte)1); //piston:BlockFace.UP
+            this.topLocation.getBlock().setData((byte)0); //piston:BlockFace.DOWN
         }
         else
             return false;

@@ -19,6 +19,7 @@ public abstract class Machine {
     protected Location topLocation;
     protected Location leverLocation;
     protected Inventory inventory;
+    protected BlockFace facing;
 
     public abstract boolean activate();
 
@@ -49,11 +50,83 @@ public abstract class Machine {
         }
     }
 
-    //TODO write default public method to rotate machine
-    //TODO also remove machine from handler and put back with baselocation switched
-    //TODO will also have to rewrite getMachine() method in handler to reflect this change
     public void rotate(){
+        BlockFace[] faceCycle = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.DOWN};
+        BlockFace nextDirection = null;
+        if(this.facing == BlockFace.DOWN)
+            nextDirection = BlockFace.UP;
+        else{
+            for(int i=0; i<faceCycle.length; i++){
+                if(this.facing == faceCycle[i]){
+                    nextDirection = faceCycle[i+1];
+                    break;
+                }
+            }
+        }
+        setFacing(nextDirection);
+    }
 
+    public BlockFace getFacing(){
+        return facing;
+    }
+
+    protected boolean setFacing(BlockFace direction){
+
+        switch (direction){
+            case DOWN:
+                switchTopAndBottom((byte)0); //switch top and bottom with top facing down ((byte)0 = Facing DOWN)
+                break;
+            case UP:
+                if(facing == BlockFace.DOWN)
+                    switchTopAndBottom((byte)1); //switch top and bottom with top facing up ((byte)1 = Facing UP)
+                else
+                    topLocation.getBlock().setData((byte)1);
+                break;
+            case NORTH:
+                topLocation.getBlock().setData((byte)2);
+                break;
+            case SOUTH:
+                topLocation.getBlock().setData((byte)3);
+                break;
+            case WEST:
+                topLocation.getBlock().setData((byte)4);
+                break;
+            case EAST:
+                topLocation.getBlock().setData((byte)5);
+                break;
+            default:
+                return false;
+
+        }
+        facing = direction;
+        return true;
+    }
+
+    protected boolean switchTopAndBottom(byte data){
+        //make sure machine has room for new lever location first
+        Location originalLever = leverLocation.clone();
+        boolean hasRoom = this.calculateLeverLocation(topLocation);
+        if(!hasRoom){
+            leverLocation = originalLever;
+            return false;
+        }
+
+        //switch top and bottom blocks of machine
+        originalLever.getBlock().setType(Material.AIR);
+        Material topMat = topLocation.getBlock().getType();
+        topLocation.getBlock().setTypeIdAndData(baseLocation.getBlock().getTypeId(), baseLocation.getBlock().getData(), true);
+        baseLocation.getBlock().setTypeIdAndData(topMat.getId(), data, true); //(byte)0 = Facing DOWN, (byte)1 = Facing UP
+        leverLocation.getBlock().setType(Material.LEVER);
+        baseLocation.getBlock();
+
+        //remove machine, switch stored top and bottom locations, put machine back
+        Machines.getPlugin().getMachineHandler().removeMachine(this);
+        Location tempTopLocation = topLocation.clone();
+        topLocation = baseLocation;
+        baseLocation = tempTopLocation;
+
+        Machines.getPlugin().getMachineHandler().addMachine(this);
+        return true;
     }
 
 
@@ -77,16 +150,17 @@ public abstract class Machine {
         return leverLocation;
     }
 
-    protected void calculateLeverLocation(Location baseLocation){
+    protected boolean calculateLeverLocation(Location baseLocation){
         leverLocation = null;
         Block base = baseLocation.getBlock();
         BlockFace[] faces = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
         for(BlockFace face : faces){
             if(Machines.getPlugin().getMachineData().isIgnoredMaterial(base.getRelative(face).getType())){
                 leverLocation = base.getRelative(face).getLocation();
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     @SuppressWarnings("deprecation")

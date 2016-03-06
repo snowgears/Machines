@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ public class Pump extends Machine {
         this.owner = owner;
         this.baseLocation = baseLocation;
         this.topLocation = baseLocation.clone().add(0,1,0);
+        this.facing = BlockFace.UP;
 
         calculateLeverLocation(baseLocation);
         inventory = Bukkit.createInventory(Bukkit.getPlayer(owner), 9, "Pump");
@@ -56,5 +58,22 @@ public class Pump extends Machine {
         setDirectionOfLever(leverBlock, baseLocation.getBlock().getFace(leverBlock));
 
         return true;
+    }
+
+    @Override
+    public void rotate(){
+        BlockFace[] faceCycle = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+        BlockFace nextDirection = null;
+        if(this.facing == BlockFace.WEST)
+            nextDirection = BlockFace.UP;
+        else{
+            for(int i=0; i<faceCycle.length; i++){
+                if(this.facing == faceCycle[i]){
+                    nextDirection = faceCycle[i+1];
+                    break;
+                }
+            }
+        }
+        setFacing(nextDirection);
     }
 }

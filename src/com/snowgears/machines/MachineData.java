@@ -103,7 +103,7 @@ public class MachineData {
         //mining machine
         ItemStack miningMachine = new ItemStack(Material.PISTON_BASE);
         ItemMeta miningMeta = miningMachine.getItemMeta();
-        miningMeta.setDisplayName(ChatColor.GOLD+"Mining Machine");
+        miningMeta.setDisplayName(ChatColor.GOLD+"Drill");
         ArrayList<String> miningLore = new ArrayList<String>();
         miningLore.add(ChatColor.WHITE+""+ChatColor.ITALIC+"'It looks very old and heavy'");
         miningLore.add(ChatColor.GRAY+"Requires fuel");

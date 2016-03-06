@@ -3,6 +3,7 @@ package com.snowgears.machines;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Lever;
 
@@ -32,12 +33,19 @@ public class MachineHandler {
 
         Machine machine;
         if(block.getType() == Material.LEVER){
-            machine = plugin.getMachineHandler().getMachineByLever(loc);
+            machine = this.getMachineByLever(loc);
         }
         else {
-            machine = plugin.getMachineHandler().getMachineByBase(loc);
+            machine = this.getMachineByBase(loc);
             if(machine == null){
-                machine = plugin.getMachineHandler().getMachineByBase(loc.clone().add(0,-1,0));
+                machine = this.getMachineByBase(loc.clone().add(0,-1,0));
+                if(machine != null && machine.getFacing() == BlockFace.DOWN)
+                    machine = null;
+            }
+            if(machine == null){
+                machine = this.getMachineByBase(loc.clone().add(0,1,0));
+                if(machine != null && machine.getFacing() != BlockFace.DOWN)
+                    machine = null;
             }
         }
         return machine;

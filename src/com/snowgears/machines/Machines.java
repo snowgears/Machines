@@ -1,18 +1,16 @@
 package com.snowgears.machines;
 
 import com.snowgears.machines.listeners.PlayerListener;
-import com.snowgears.machines.pump.Pump;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
-import java.util.UUID;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Logger;
 
 public class Machines extends JavaPlugin {

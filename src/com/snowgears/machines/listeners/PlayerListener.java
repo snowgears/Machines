@@ -10,6 +10,7 @@ import com.snowgears.machines.pump.Pump;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,10 +23,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class PlayerListener implements Listener{
 
     public Machines plugin = Machines.getPlugin();
+    private long interactEventTick = 0;
 
     public PlayerListener(Machines instance) {
         plugin = instance;
     }
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
@@ -79,19 +82,12 @@ public class PlayerListener implements Listener{
 
         boolean brokeBase = false;
 
-        Machine machine = null;
-        if(event.getBlock().getType() == Material.LEVER){
-            machine = plugin.getMachineHandler().getMachineByLever(event.getBlock().getLocation());
+        Machine machine = plugin.getMachineHandler().getMachineByBase(event.getBlock().getLocation());
+        if(machine == null){
+            machine = plugin.getMachineHandler().getMachine(event.getBlock().getLocation());
         }
-        else {
-            machine = plugin.getMachineHandler().getMachineByBase(event.getBlock().getLocation());
-            if(machine == null){
-                machine = plugin.getMachineHandler().getMachine(event.getBlock().getLocation().clone().add(0,-1,0));
-            }
-            else{
-                brokeBase = true;
-            }
-        }
+        else
+            brokeBase = true;
 
         if(machine == null)
             return;
@@ -122,6 +118,13 @@ public class PlayerListener implements Listener{
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockClick(PlayerInteractEvent event) {
+        //must check the time between this and last interact event since it is thrown twice in MC 1.9
+        long tickCheck = System.currentTimeMillis();
+        if(tickCheck - interactEventTick < 5) {
+            event.setCancelled(true);
+        }
+        interactEventTick = tickCheck;
+
         if (event.isCancelled())
             return;
         Player player = event.getPlayer();
@@ -132,11 +135,15 @@ public class PlayerListener implements Listener{
             if(machine != null){
                 player.openInventory(machine.getInventory());
                 event.setCancelled(true);
+                return;
             }
             //TODO rotate machine here
-            //if(machine == null)
-            //machine = getMachine(clicked)
-            //if not null, rotate
+            if(machine == null)
+                machine = plugin.getMachineHandler().getMachine(clicked);
+            if(machine != null) {
+                machine.rotate();
+                event.setCancelled(true);
+            }
         }
     }
 }
