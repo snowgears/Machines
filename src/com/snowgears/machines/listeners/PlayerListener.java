@@ -10,15 +10,16 @@ import com.snowgears.machines.pump.Pump;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.material.PistonBaseMaterial;
+import org.bukkit.material.PistonExtensionMaterial;
 
 public class PlayerListener implements Listener{
 
@@ -120,7 +121,7 @@ public class PlayerListener implements Listener{
     public void onBlockClick(PlayerInteractEvent event) {
         //must check the time between this and last interact event since it is thrown twice in MC 1.9
         long tickCheck = System.currentTimeMillis();
-        if(tickCheck - interactEventTick < 5) {
+        if(tickCheck - interactEventTick < 10) {
             event.setCancelled(true);
         }
         interactEventTick = tickCheck;
@@ -131,19 +132,47 @@ public class PlayerListener implements Listener{
 
         if(event.getAction() == Action.RIGHT_CLICK_BLOCK){
             Location clicked = event.getClickedBlock().getLocation();
+
+            //check to see if machine base was clicked
             Machine machine = plugin.getMachineHandler().getMachineByBase(clicked);
             if(machine != null){
                 player.openInventory(machine.getInventory());
                 event.setCancelled(true);
                 return;
             }
-            //TODO rotate machine here
-            if(machine == null)
-                machine = plugin.getMachineHandler().getMachine(clicked);
+
+            //check to see if machine lever was clicked
+            machine = plugin.getMachineHandler().getMachineByLever(clicked);
+            if(machine != null) {
+                event.setCancelled(true);
+
+               if (machine.isActive())
+                   machine.deactivate();
+               else
+                   machine.activate();
+
+
+                return;
+            }
+
+            //check to see if machine "top" was clicked (ROTATE)
+            machine = plugin.getMachineHandler().getMachine(clicked);
             if(machine != null) {
                 machine.rotate();
                 event.setCancelled(true);
+                return;
             }
         }
     }
+
+//    @EventHandler
+//    public void onPistonRetract(BlockPistonRetractEvent event){
+//       // event.setCancelled(true);
+//        System.out.println("Piston Retracted");
+//    }
+//
+//    @EventHandler
+//    public void onPistonExtend(BlockPistonExtendEvent event){
+//        System.out.println("Piston Extended");
+//    }
 }

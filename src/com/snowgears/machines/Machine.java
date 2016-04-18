@@ -6,8 +6,10 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Lever;
 
 import java.util.Iterator;
 import java.util.UUID;
@@ -20,12 +22,11 @@ public abstract class Machine {
     protected Location leverLocation;
     protected Inventory inventory;
     protected BlockFace facing;
+    protected boolean isActive;
 
     public abstract boolean activate();
 
     public abstract boolean deactivate();
-
-    public abstract boolean isActive();
 
     public abstract boolean create();
 
@@ -63,13 +64,26 @@ public abstract class Machine {
                 }
             }
         }
-        setFacing(nextDirection);
+
+        //need make sure the machine has time to deactivate before rotating
+        if(isActive) {
+            this.deactivate();
+            final BlockFace nextDirectionFinal = nextDirection;
+            Machines.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Machines.getPlugin(), new Runnable() {
+                public void run() {
+                    setFacing(nextDirectionFinal);
+                }
+            }, 5L);
+        }
+        else
+            setFacing(nextDirection);
     }
 
     public BlockFace getFacing(){
         return facing;
     }
 
+    @SuppressWarnings("deprecation")
     protected boolean setFacing(BlockFace direction){
 
         switch (direction){
@@ -102,6 +116,7 @@ public abstract class Machine {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     protected boolean switchTopAndBottom(byte data){
         //make sure machine has room for new lever location first
         Location originalLever = leverLocation.clone();
@@ -117,13 +132,13 @@ public abstract class Machine {
         topLocation.getBlock().setTypeIdAndData(baseLocation.getBlock().getTypeId(), baseLocation.getBlock().getData(), true);
         baseLocation.getBlock().setTypeIdAndData(topMat.getId(), data, true); //(byte)0 = Facing DOWN, (byte)1 = Facing UP
         leverLocation.getBlock().setType(Material.LEVER);
-        baseLocation.getBlock();
 
         //remove machine, switch stored top and bottom locations, put machine back
         Machines.getPlugin().getMachineHandler().removeMachine(this);
         Location tempTopLocation = topLocation.clone();
         topLocation = baseLocation;
         baseLocation = tempTopLocation;
+        setDirectionOfLever(leverLocation.getBlock(), baseLocation.getBlock().getFace(leverLocation.getBlock()));
 
         Machines.getPlugin().getMachineHandler().addMachine(this);
         return true;
@@ -150,6 +165,10 @@ public abstract class Machine {
         return leverLocation;
     }
 
+    public boolean isActive(){
+        return isActive;
+    }
+
     protected boolean calculateLeverLocation(Location baseLocation){
         leverLocation = null;
         Block base = baseLocation.getBlock();
@@ -173,6 +192,25 @@ public abstract class Machine {
             lever.setData((byte)3);
         else if(bf == BlockFace.WEST)
             lever.setData((byte)2);
+    }
+
+    @SuppressWarnings("deprecation")
+    protected void setLever(boolean on) {
+        final Block leverBlock = leverLocation.getBlock();
+        Lever lever = (Lever) leverBlock.getState().getData();
+
+        lever.setPowered(on);
+        leverBlock.setData(lever.getData(), true);
+        leverBlock.getState().setData(lever);
+        leverBlock.getState().update(true);
+
+        //hacky fix for state not updating bug
+        Block supportBlock = leverBlock.getRelative(lever.getAttachedFace());
+        BlockState initialSupportState = supportBlock.getState();
+        BlockState supportState = supportBlock.getState();
+        supportState.setType(Material.AIR);
+        supportState.update(true, false);
+        initialSupportState.update(true);
     }
 
 }

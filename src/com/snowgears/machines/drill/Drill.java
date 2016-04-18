@@ -8,11 +8,15 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.material.PistonBaseMaterial;
+import org.bukkit.material.PistonExtensionMaterial;
 
 import java.util.UUID;
 
 public class Drill extends Machine {
 
+    private boolean leverOn = false;
+    private int taskID;
 
     public Drill(UUID owner, Location baseLocation){
         this.owner = owner;
@@ -27,20 +31,39 @@ public class Drill extends Machine {
 
     @Override
     public boolean activate() {
+        //start the piston task
+        taskID = Machines.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(Machines.getPlugin(), new Runnable() {
+            public void run() {
+                //TODO move to own methods
+                //toggleLever()
+                //gatherMaterials()
+                if(leverOn) {
+                    setLever(false);
+                    leverOn = false;
+                }
+                else{
+                    setLever(true);
+                    leverOn = true;
+                }
+            }
+        }, 0L, 10L);
+
+        isActive = true;
         return false;
     }
 
     @Override
     public boolean deactivate() {
+        Bukkit.getScheduler().cancelTask(taskID);
+        this.setLever(false);
+
+        //cancel all tasks
+        isActive = false;
         return false;
     }
 
     @Override
-    public boolean isActive() {
-        return false;
-    }
-
-    @Override
+    @SuppressWarnings("deprecation")
     public boolean create() {
         if(leverLocation == null)
             return false;

@@ -1,7 +1,7 @@
 name: Machines
 author: Tanner Embry
 description: Build and use different machines in Minecraft!
-version: 0.1
+version: 0.2
 main: com.snowgears.machines.Machines
 permissions:
     machines.gravity.use:

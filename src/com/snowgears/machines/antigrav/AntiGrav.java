@@ -26,16 +26,17 @@ public class AntiGrav extends Machine {
 
     @Override
     public boolean activate() {
+        this.setLever(true);
+
+        isActive = true;
         return false;
     }
 
     @Override
     public boolean deactivate() {
-        return false;
-    }
+        this.setLever(false);
 
-    @Override
-    public boolean isActive() {
+        isActive = false;
         return false;
     }
 

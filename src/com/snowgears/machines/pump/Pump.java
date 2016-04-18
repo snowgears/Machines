@@ -25,20 +25,22 @@ public class Pump extends Machine {
 
     @Override
     public boolean activate() {
+        this.setLever(true);
+
+        isActive = true;
         return false;
     }
 
     @Override
     public boolean deactivate() {
+        this.setLever(false);
+
+        isActive = false;
         return false;
     }
 
     @Override
-    public boolean isActive() {
-        return false;
-    }
-
-    @Override
+    @SuppressWarnings("deprecation")
     public boolean create() {
         if(leverLocation == null)
             return false;
@@ -74,6 +76,8 @@ public class Pump extends Machine {
                 }
             }
         }
-        setFacing(nextDirection);
+        boolean rotated = setFacing(nextDirection);
+        if(rotated)
+            this.deactivate();
     }
 }
