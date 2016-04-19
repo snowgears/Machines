@@ -1,5 +1,4 @@
-package com.snowgears.machines.drill;
-
+package com.snowgears.machines.paver;
 
 import com.snowgears.machines.Machine;
 import com.snowgears.machines.Machines;
@@ -16,20 +15,21 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Drill extends Machine {
+//TODO this machine will work as the drill does, only it will take blocks out of its inventory (in order) and place them. Machine will stop once hitting a material that cannot be overwritten
+public class Paver extends Machine {
 
     private Block taskBlock;
     private boolean leverOn = false;
     private int taskID;
 
-    public Drill(UUID owner, Location baseLocation){
+    public Paver(UUID owner, Location baseLocation) {
         this.owner = owner;
         this.topLocation = baseLocation;
-        this.baseLocation = baseLocation.clone().add(0,1,0);
+        this.baseLocation = baseLocation.clone().add(0, 1, 0);
         this.facing = BlockFace.DOWN;
 
         calculateLeverLocation(this.baseLocation);
-        inventory = Bukkit.createInventory(Bukkit.getPlayer(owner), 9, "Drill");
+        inventory = Bukkit.createInventory(Bukkit.getPlayer(owner), 9, "Paver");
     }
 
 
@@ -56,33 +56,32 @@ public class Drill extends Machine {
         return false;
     }
 
-    private void toggleLever(){
-        if(leverOn) {
+    private void toggleLever() {
+        if (leverOn) {
             setLever(false);
             leverOn = false;
-        }
-        else{
+        } else {
             setLever(true);
             leverOn = true;
         }
     }
 
-    private void gatherMaterial(){
+    private void gatherMaterial() {
         //TODO also switch order of the way these happen. Make sure if cancelled it is not added to inventory
         //TODO add filling of water/lava in buckets
         //TODO also make sure it halts when hitting another machine
-        for(ItemStack is : taskBlock.getDrops()) {
+        for (ItemStack is : taskBlock.getDrops()) {
             HashMap<Integer, ItemStack> overflow = this.inventory.addItem(is);
-            if(!overflow.isEmpty()){
-                for(ItemStack drop : overflow.values()){
+            if (!overflow.isEmpty()) {
+                for (ItemStack drop : overflow.values()) {
                     taskBlock.getWorld().dropItem(taskBlock.getLocation(), drop);
                 }
             }
         }
 
         Player player = this.getOwner().getPlayer();
-        if(player != null) {
-            if(Machines.getPlugin().getDrillConfig().canDrill(taskBlock.getType())) {
+        if (player != null) {
+            if (Machines.getPlugin().getDrillConfig().canDrill(taskBlock.getType())) {
                 BlockBreakEvent event = new BlockBreakEvent(taskBlock, this.getOwner().getPlayer());
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
@@ -90,11 +89,9 @@ public class Drill extends Machine {
                     taskBlock.setType(Material.AIR);
                 } else
                     this.deactivate();
-            }
-            else
+            } else
                 deactivate();
-        }
-        else{
+        } else {
             this.deactivate();
         }
     }
@@ -113,16 +110,15 @@ public class Drill extends Machine {
     @Override
     @SuppressWarnings("deprecation")
     public boolean create() {
-        if(leverLocation == null)
+        if (leverLocation == null)
             return false;
         this.baseLocation.getBlock().setType(Material.OBSIDIAN);
 
         //before building top block, check that the location is clear
-        if(Machines.getPlugin().getMachineData().isIgnoredMaterial(topLocation.getBlock().getType())) {
+        if (Machines.getPlugin().getMachineData().isIgnoredMaterial(topLocation.getBlock().getType())) {
             this.topLocation.getBlock().setType(Material.PISTON_BASE);
-            this.topLocation.getBlock().setData((byte)0); //piston:BlockFace.DOWN
-        }
-        else
+            this.topLocation.getBlock().setData((byte) 0); //piston:BlockFace.DOWN
+        } else
             return false;
 
         Block leverBlock = leverLocation.getBlock();

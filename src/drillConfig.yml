@@ -1,0 +1,40 @@
+# This is the configuration file for the Drill machine. #
+# A full list of materials can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html #
+
+drill:
+    # The number represents how many blocks the machine will mine per fuel #
+    fuelTypes:
+        COAL: 10
+        LAVA_BUCKET: 100
+        BLAZE_ROD: 30
+        LOG: 4
+        WOOD: 1
+    # This determines whether the drill will fill empty buckets in its inventory when encountering water/lava #
+    fillBuckets: true
+    # These are the materials that drills cannot mine, and will halt when running into them #
+    blockBlacklist:
+        ARMOR_STAND: true
+        BANNER: true
+        BEACON: true
+        BED_BLOCK: true
+        BREWING_STAND: true
+        BEDROCK: true
+        BURNING_FURNACE: true
+        COMMAND: true
+        CHEST: true
+        DISPENSER: true
+        DROPPER: true
+        ENCHANTMENT_TABLE: true
+        ENDER_CHEST: true
+        FURNACE: true
+        PISTON_BASE: true
+        PISTON_EXTENSION: true
+        PISTON_MOVING_PIECE: true
+        PISTON_STICKY_BASE: true
+        SIGN: true
+        SIGN_POST: true
+        SKULL: true
+        STANDING_BANNER: true
+        TRAPPED_CHEST: true
+        WALL_BANNER: true
+        WALL_SIGN: true

@@ -1,36 +1,3 @@
 # Thanks for downloading Machines! #
 
 usePermissions: false
-
-gravity:
-    # This is the radius of the hemisphere that the machine will levitate #
-    radiusOfLevitation: 20
-
-    # This is how high into the air the machine will levitate the ground from its original location #
-    heightOfLevitation: 50
-
-    # This is how many blocks the machine can be underground and still function #
-    # Prevent players from easily spotting ore in the sides of levitated areas by keeping this number low #
-    maxDepthOfLevitation: 20
-
-    # true : Only the machine owner (and OPs) can destroy a machine #
-    # false : Anyone can destroy any machine #
-    protection: true
-
-    # This is how many times a machine can be used before it breaks #
-    defaultUses: 2
-
-    # These are the messages that are displayed to players when different things happen #
-    useMessage: 'The machine starts to spin rapidly! All of time and space blurs together as you feel yourself being lifted!'
-    breakMessage: 'The machine reached its use limit and disintegrated into the blockmosphere...'
-
-miner:
-    # The number represents how many blocks the machine will mine per material #
-    FuelTypes:
-        Coal: 10
-        Lava Bucket: 100
-        Blaze Rod: 30
-        Wood Log: 4
-        Wood Plank: 1
-
-pump:

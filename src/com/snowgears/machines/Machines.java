@@ -1,5 +1,6 @@
 package com.snowgears.machines;
 
+import com.snowgears.machines.drill.DrillConfig;
 import com.snowgears.machines.listeners.PlayerListener;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -24,8 +25,7 @@ public class Machines extends JavaPlugin {
     private PlayerListener playerListener = new PlayerListener(this);
     private MachineData machineData = new MachineData(this);
     private MachineHandler machineHandler;
-
-
+    private DrillConfig drillConfig;
 
     public static Machines getPlugin() {
         return plugin;
@@ -45,6 +45,15 @@ public class Machines extends JavaPlugin {
         }
         config = YamlConfiguration.loadConfiguration(configFile);
 
+        //generate drill config file
+        File drillConfigFile = new File(getDataFolder(), "drillConfig.yml");
+        if (!drillConfigFile.exists()) {
+            drillConfigFile.getParentFile().mkdirs();
+            copy(getResource("drillConfig.yml"), drillConfigFile);
+        }
+        drillConfig = new DrillConfig();
+
+        //TODO generate other machine config files
 
         usePerms = config.getBoolean("usePermissions");
     }
@@ -86,6 +95,9 @@ public class Machines extends JavaPlugin {
     }
     public MachineHandler getMachineHandler(){
         return machineHandler;
+    }
+    public DrillConfig getDrillConfig(){
+        return drillConfig;
     }
 
     private void copy(InputStream in, File file) {
