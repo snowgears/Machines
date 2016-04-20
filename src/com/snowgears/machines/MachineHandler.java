@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Lever;
+import org.bukkit.material.PistonExtensionMaterial;
 
 import java.util.*;
 
@@ -30,6 +31,12 @@ public class MachineHandler {
 
     public Machine getMachine(Location loc){
         Block block = loc.getBlock();
+
+        //make sure if getting by a piston extension piece, the base is checked instead
+        if(block.getType() == Material.PISTON_EXTENSION){
+            PistonExtensionMaterial pistonEnd = (PistonExtensionMaterial)block.getState().getData();
+            loc = block.getRelative(pistonEnd.getAttachedFace()).getLocation();
+        }
 
         Machine machine;
         if(block.getType() == Material.LEVER){

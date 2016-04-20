@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -130,8 +131,15 @@ public class PlayerListener implements Listener{
         if(event.getAction() == Action.RIGHT_CLICK_BLOCK){
             Location clicked = event.getClickedBlock().getLocation();
 
+            //make sure machine can not be clicked while on cooldown
+            Machine machine = plugin.getMachineHandler().getMachine(clicked);
+            if(machine != null && machine.onCooldown()){
+                event.setCancelled(true);
+                return;
+            }
+
             //check to see if machine base was clicked
-            Machine machine = plugin.getMachineHandler().getMachineByBase(clicked);
+            machine = plugin.getMachineHandler().getMachineByBase(clicked);
             if(machine != null){
                 player.openInventory(machine.getInventory());
                 event.setCancelled(true);
@@ -159,6 +167,18 @@ public class PlayerListener implements Listener{
                 event.setCancelled(true);
                 return;
             }
+        }
+    }
+
+    //Prevent Drills from moving each other
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPistonExtend(BlockPistonExtendEvent event){
+        if(event.isCancelled())
+            return;
+        Machine m = plugin.getMachineHandler().getMachine(event.getBlock().getLocation());
+        if(m != null){
+            if(!m.isActive())
+                event.setCancelled(true);
         }
     }
 }

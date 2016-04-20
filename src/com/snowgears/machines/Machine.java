@@ -23,6 +23,7 @@ public abstract class Machine {
     protected Inventory inventory;
     protected BlockFace facing;
     protected boolean isActive;
+    protected boolean onCooldown;
 
     public abstract boolean activate();
 
@@ -31,6 +32,7 @@ public abstract class Machine {
     public abstract boolean create();
 
     public boolean remove(boolean dropInventory){
+        deactivate();
         leverLocation.getBlock().setType(Material.AIR);
         topLocation.getBlock().setType(Material.AIR);
         baseLocation.getBlock().setType(Material.AIR);
@@ -51,6 +53,10 @@ public abstract class Machine {
         }
     }
 
+    //TODO THERE IS A PROBLEM WITH DRILLS CHANGING DIRECTIONS/EXTENDING PISTONS WHEN CLICKING THEM TOO FAST AND IN A LINE WITH A LOT GOING AT ONCE
+    //TODO TRY PRINTING INTERACT WHEN CLICKING A MACHINE ALONG WITH ITS DETAILS WHEN IT IS UNRESPONSIVE TO ROTATE ANYMORE
+    //TODO When doing the delayed rotation of machines when active, put Machine into a hashmap, then on interact event, if that machine is on a cooldown, return
+    //this should (hopefully) clear up any problems with that
     public void rotate(){
         BlockFace[] faceCycle = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.DOWN};
         BlockFace nextDirection = null;
@@ -67,13 +73,15 @@ public abstract class Machine {
 
         //need make sure the machine has time to deactivate before rotating
         if(isActive) {
+            this.onCooldown = true;
             this.deactivate();
             final BlockFace nextDirectionFinal = nextDirection;
             Machines.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(Machines.getPlugin(), new Runnable() {
                 public void run() {
                     setFacing(nextDirectionFinal);
+                    onCooldown = false;
                 }
-            }, 5L);
+            }, 10L);
         }
         else
             setFacing(nextDirection);
@@ -169,6 +177,10 @@ public abstract class Machine {
         return isActive;
     }
 
+    public boolean onCooldown(){
+        return onCooldown;
+    }
+
     protected boolean calculateLeverLocation(Location baseLocation){
         leverLocation = null;
         Block base = baseLocation.getBlock();
@@ -196,13 +208,16 @@ public abstract class Machine {
 
     @SuppressWarnings("deprecation")
     protected void setLever(boolean on) {
-        final Block leverBlock = leverLocation.getBlock();
-        Lever lever = (Lever) leverBlock.getState().getData();
+        Block leverBlock = leverLocation.getBlock();
+        Lever lever = null;
+        if(leverBlock.getType() == Material.LEVER)
+            lever = (Lever) leverBlock.getState().getData();
+        else
+            return;
 
+        //this flips the lever
         lever.setPowered(on);
         leverBlock.setData(lever.getData(), true);
-        leverBlock.getState().setData(lever);
-        leverBlock.getState().update(true);
 
         //hacky fix for state not updating bug
         Block supportBlock = leverBlock.getRelative(lever.getAttachedFace());

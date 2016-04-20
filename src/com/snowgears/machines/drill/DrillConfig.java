@@ -12,6 +12,7 @@ public class DrillConfig {
 
     private HashMap<Material, Boolean> materialBlacklist;
     private HashMap<Material, Integer> fuelMap;
+    private int speed;
     private boolean fillBuckets;
 
     public DrillConfig(){
@@ -31,6 +32,10 @@ public class DrillConfig {
             return fuelMap.get(type);
         }
         return 0;
+    }
+
+    public int getSpeed(){
+        return speed;
     }
 
     public boolean fillBuckets(){
@@ -58,6 +63,7 @@ public class DrillConfig {
             fuelMap.put(m, power);
         }
 
+        speed = config.getInt("drill.speedInTicks");
         fillBuckets = config.getBoolean("drill.fillBuckets");
     }
 }

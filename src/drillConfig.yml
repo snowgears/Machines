@@ -2,6 +2,10 @@
 # A full list of materials can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html #
 
 drill:
+    # This controls how fast drills operate. (20 ticks = 1 second) Larger numbers make drills operate slower #
+    speedInTicks: 10
+    # This controls whether the drill will fill empty buckets in its inventory when encountering water/lava #
+    fillBuckets: true
     # The number represents how many blocks the machine will mine per fuel #
     fuelTypes:
         COAL: 10
@@ -9,8 +13,6 @@ drill:
         BLAZE_ROD: 30
         LOG: 4
         WOOD: 1
-    # This determines whether the drill will fill empty buckets in its inventory when encountering water/lava #
-    fillBuckets: true
     # These are the materials that drills cannot mine, and will halt when running into them #
     blockBlacklist:
         ARMOR_STAND: true
