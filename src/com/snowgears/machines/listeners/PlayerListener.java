@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,7 +26,9 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class PlayerListener implements Listener{
 
@@ -155,8 +158,19 @@ public class PlayerListener implements Listener{
                     event.setCancelled(true);
                     return;
                 }
-                //TODO if player is not owner (and not OP) or does not have permissions, cancel event
-                //if()
+                //player is trying to use another players machine
+                if(plugin.useProtection()) {
+                    if (!player.getUniqueId().equals(machine.getOwner().getUniqueId())) {
+                        if (player.isOp() || (plugin.usePerms() && player.hasPermission("machines.operator"))) {
+                            //do nothing. They are allowed to use the machine
+                        }
+                        else{
+                            player.sendMessage(ChatColor.RED+"You do not have permission to use this machine.");
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
+                }
             }
         }
 
@@ -210,30 +224,29 @@ public class PlayerListener implements Listener{
     //TODO this is from color portals. Implement same protection system here
     @EventHandler
     public void onExplosion(EntityExplodeEvent event) {
-//        final ArrayList<Block> blocksToDestroy = new ArrayList<Block>(50);
-//
-//        //save all potential portal blocks (for sake of time during explosion)
-//        Iterator<Block> blockIterator = event.blockList().iterator();
-//        while (blockIterator.hasNext()) {
-//
-//            Block block = blockIterator.next();
-//            Portal portal = null;
-//            if(block.getType() == Material.WALL_SIGN){
-//                portal = plugin.getPortalHandler().getPortal(block.getLocation());
-//            }
-//            else if (block.getType() == Material.WOOL || block.getType() == Material.WOOD_BUTTON || block.getType() == Material.STONE_BUTTON
-//                    || block.getType() == Material.WOOD_PLATE || block.getType() == Material.STONE_PLATE || block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
-//                portal = plugin.getPortalHandler().getPortalByFrameLocation(block.getLocation());
-//            }
-//
-//            if (portal != null) {
-//                if (plugin.getPortalProtection()) {
-//                    blockIterator.remove();
-//                } else {
-//                    portal.remove();
-//                }
-//            }
-//        }
+        final ArrayList<Block> blocksToDestroy = new ArrayList<Block>(50);
+
+        //save all potential machine blocks (for sake of time during explosion)
+        Iterator<Block> blockIterator = event.blockList().iterator();
+        while (blockIterator.hasNext()) {
+
+            Block block = blockIterator.next();
+            Machine machine = null;
+            if(block.getType() == Material.LEVER){
+                machine = plugin.getMachineHandler().getMachineByLever(block.getLocation());
+            }
+            else{
+                machine = plugin.getMachineHandler().getMachine(block.getLocation());
+            }
+
+            if (machine != null) {
+                if (plugin.useProtection()) {
+                    blockIterator.remove();
+                } else {
+                    machine.remove(true);
+                }
+            }
+        }
     }
 
     //Prevent Drills from moving each other

@@ -56,10 +56,20 @@ public abstract class Machine {
         }
     }
 
-    //TODO THERE IS A PROBLEM WITH DRILLS CHANGING DIRECTIONS/EXTENDING PISTONS WHEN CLICKING THEM TOO FAST AND IN A LINE WITH A LOT GOING AT ONCE
-    //TODO TRY PRINTING INTERACT WHEN CLICKING A MACHINE ALONG WITH ITS DETAILS WHEN IT IS UNRESPONSIVE TO ROTATE ANYMORE
-    //TODO When doing the delayed rotation of machines when active, put Machine into a hashmap, then on interact event, if that machine is on a cooldown, return
-    //this should (hopefully) clear up any problems with that
+    protected boolean consumeFuel(){
+        int lastSlot = this.getInventory().getSize()-1;
+        ItemStack fuel = this.getInventory().getItem(lastSlot);
+        if(fuel != null){
+            fuel.setAmount(fuel.getAmount()-1);
+            if(fuel.getAmount() == 0)
+                this.getInventory().setItem(lastSlot, new ItemStack(Material.AIR));
+            else
+                this.getInventory().setItem(lastSlot, fuel);
+            return true;
+        }
+        return false;
+    }
+
     public void rotate(){
         BlockFace[] faceCycle = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.DOWN};
         BlockFace nextDirection = null;
