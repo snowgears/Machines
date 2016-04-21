@@ -70,7 +70,7 @@ public class DrillConfig {
     }
 
     public int getFuelPower(Material type){
-        if(fuelMap.containsKey(type)){
+        if (fuelMap.containsKey(type)) {
             return fuelMap.get(type);
         }
         return 0;

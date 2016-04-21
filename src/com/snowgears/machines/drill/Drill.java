@@ -4,10 +4,7 @@ package com.snowgears.machines.drill;
 import com.snowgears.machines.Machine;
 import com.snowgears.machines.Machines;
 import com.snowgears.machines.util.InventoryUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -19,8 +16,9 @@ import java.util.UUID;
 
 public class Drill extends Machine {
 
+    private boolean leverOn;
+    private int fuelPower;
     private Block taskBlock;
-    private boolean leverOn = false;
     private int taskID;
 
     public Drill(UUID owner, Location baseLocation){
@@ -28,6 +26,7 @@ public class Drill extends Machine {
         this.topLocation = baseLocation;
         this.baseLocation = baseLocation.clone().add(0,1,0);
         this.facing = BlockFace.DOWN;
+        this.fuelPower = 0;
 
         calculateLeverLocation(this.baseLocation);
         inventory = Machines.getPlugin().getDrillConfig().createInventory(this.getOwner().getPlayer());
@@ -42,21 +41,60 @@ public class Drill extends Machine {
         //set the starting location to be in front of piston
         taskBlock = piston.getRelative(this.getFacing());
         //gather the material of the taskBlock before starting machine task (to avoid piston head)
-        gatherMaterial();
-        taskBlock = piston.getRelative(this.getFacing());
+//        gatherMaterial();
+//        taskBlock = piston.getRelative(this.getFacing());
+        int power = fuelCheck(true);
+        System.out.println("initial power = "+power);
+        if(power == 0){
+            deactivate();
+            if(this.getOwner().getPlayer() != null)
+                this.getOwner().getPlayer().sendMessage(ChatColor.GRAY+"The machine needs fuel in order to start.");
+            return false;
+        }
+
         //start the piston task
         taskID = Machines.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(Machines.getPlugin(), new Runnable() {
             public void run() {
-                //TODO check for fuel and consume it
-                toggleLever();
-                gatherMaterial();
-                taskBlock.getWorld().playEffect(topLocation, Effect.SMOKE, 4);
-                taskBlock = taskBlock.getRelative(getFacing());
+                int fuelCheck = fuelCheck(false);
+                if(fuelCheck > 0) {
+                    gatherMaterial();
+                    toggleLever();
+                    taskBlock.getWorld().playEffect(topLocation, Effect.SMOKE, 4);
+                    taskBlock = taskBlock.getRelative(getFacing());
+                }
+                else
+                    deactivate();
             }
         }, 0L, Machines.getPlugin().getDrillConfig().getSpeed());
 
         isActive = true;
         return true;
+    }
+
+    private int fuelCheck(boolean startCheck){
+        if(!startCheck){
+            if(fuelPower != 0)
+                fuelPower--;
+        }
+        if(fuelPower == 0) {
+            int lastSlot = this.getInventory().getSize() - 1;
+            ItemStack fuel = this.getInventory().getItem(lastSlot);
+            int power = 0;
+            if(fuel != null)
+                power = Machines.getPlugin().getDrillConfig().getFuelPower(fuel.getType());
+            if(!startCheck) {
+                if (power == 0) {
+                    fuelPower = 0;
+                    deactivate();
+                    return 0;
+                }
+                else
+                    consumeFuel();
+                fuelPower = power;
+            }
+            return power;
+        }
+        return fuelPower;
     }
 
     private void toggleLever(){
