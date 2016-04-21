@@ -1,7 +1,52 @@
 # This is the configuration file for the Drill machine. #
 # A full list of materials can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html #
+# ================================================================== #
+# &b : AQUA
+# &0 : BLACK
+# &9 : BLUE
+# &l : BOLD
+# &3 : DARK_AQUA
+# &1 : DARK_BLUE
+# &8 : DARK_GRAY
+# &2 : DARK_GREEN
+# &5 : DARK_PURPLE
+# &4 : DARK_RED
+# &6 : GOLD
+# &7 : GRAY
+# &a : GREEN
+# &o : ITALIC
+# &d : LIGHT_PURPLE
+# &k : MAGIC
+# &c : RED
+# &r : RESET
+# &m : STRIKETHROUGH
+# &n : UNDERLINE
+# &f : WHITE
+# &e : YELLOW
 
 drill:
+    # This controls whether drills will be allowed on the server at all #
+    enabled: true
+    # These control how drills inventories are created #
+    inventory:
+        name: 'Drill'
+        rows: 1
+    # This is used to set the drill item information #
+    item:
+        type: 'PISTON_BASE'
+        name: '&6Drill'
+        lore:
+            1: "&f&o'It looks very old and heavy'"
+            2: "&7Requires fuel"
+    # This controls the recipe to craft drills #
+    crafting:
+        shape: ['RPR', 'RFR', 'IOI']
+        mapping:
+            R: 'BLAZE_ROD'
+            P: 'PISTON_BASE'
+            F: 'FURNACE'
+            I: 'IRON_PICKAXE'
+            O: 'OBSIDIAN'
     # This controls how fast drills operate. (20 ticks = 1 second) Larger numbers make drills operate slower #
     speedInTicks: 10
     # This controls whether the drill will fill empty buckets in its inventory when encountering water/lava #
@@ -13,30 +58,30 @@ drill:
         BLAZE_ROD: 30
         LOG: 4
         WOOD: 1
-    # These are the materials that drills cannot mine, and will halt when running into them #
+    # These are the materials that drills cannot break, and will halt when running into them #
     blockBlacklist:
-        ARMOR_STAND: true
-        BANNER: true
-        BEACON: true
-        BED_BLOCK: true
-        BREWING_STAND: true
-        BEDROCK: true
-        BURNING_FURNACE: true
-        COMMAND: true
-        CHEST: true
-        DISPENSER: true
-        DROPPER: true
-        ENCHANTMENT_TABLE: true
-        ENDER_CHEST: true
-        FURNACE: true
-        PISTON_BASE: true
-        PISTON_EXTENSION: true
-        PISTON_MOVING_PIECE: true
-        PISTON_STICKY_BASE: true
-        SIGN: true
-        SIGN_POST: true
-        SKULL: true
-        STANDING_BANNER: true
-        TRAPPED_CHEST: true
-        WALL_BANNER: true
-        WALL_SIGN: true
+        - ARMOR_STAND
+        - BANNER
+        - BEACON
+        - BED_BLOCK
+        - BREWING_STAND
+        - BEDROCK
+        - BURNING_FURNACE
+        - COMMAND
+        - CHEST
+        - DISPENSER
+        - DROPPER
+        - ENCHANTMENT_TABLE
+        - ENDER_CHEST
+        - FURNACE
+        - PISTON_BASE
+        - PISTON_EXTENSION
+        - PISTON_MOVING_PIECE
+        - PISTON_STICKY_BASE
+        - SIGN
+        - SIGN_POST
+        - SKULL
+        - STANDING_BANNER
+        - TRAPPED_CHEST
+        - WALL_BANNER
+        - WALL_SIGN

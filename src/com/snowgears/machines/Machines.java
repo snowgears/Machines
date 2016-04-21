@@ -20,10 +20,11 @@ public class Machines extends JavaPlugin {
     private static Machines plugin;
     private YamlConfiguration config;
 
-    private boolean usePerms = false;
+    private boolean usePerms;
+    private boolean useProtection;
 
     private PlayerListener playerListener = new PlayerListener(this);
-    private MachineData machineData = new MachineData(this);
+    private MachineData machineData;
     private MachineHandler machineHandler;
     private DrillConfig drillConfig;
 
@@ -52,10 +53,12 @@ public class Machines extends JavaPlugin {
             copy(getResource("drillConfig.yml"), drillConfigFile);
         }
         drillConfig = new DrillConfig();
+        machineData = new MachineData(this);
 
         //TODO generate other machine config files
 
         usePerms = config.getBoolean("usePermissions");
+        useProtection = config.getBoolean("protection");
     }
 
     @Override
@@ -74,7 +77,8 @@ public class Machines extends JavaPlugin {
                 if(args[0].equalsIgnoreCase("give")) {
                     Player player = (Player)sender;
                     player.getInventory().addItem(machineData.getItem(MachineType.ANTIGRAV));
-                    player.getInventory().addItem(machineData.getItem(MachineType.DRILL));
+                    if(drillConfig.isEnabled())
+                        player.getInventory().addItem(machineData.getItem(MachineType.DRILL));
                     player.getInventory().addItem(machineData.getItem(MachineType.PUMP));
                 }
                 else if(args[0].equalsIgnoreCase("list")) {
@@ -89,6 +93,9 @@ public class Machines extends JavaPlugin {
 
     public boolean usePerms() {
         return usePerms;
+    }
+    public boolean useProtection() {
+        return useProtection;
     }
     public MachineData getMachineData(){
         return machineData;

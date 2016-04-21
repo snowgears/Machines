@@ -1,3 +1,6 @@
 # Thanks for downloading Machines! #
 
 usePermissions: false
+
+# This controls whether other people/explosions are able to destroy machines #
+protection: true

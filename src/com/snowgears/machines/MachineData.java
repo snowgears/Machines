@@ -1,5 +1,8 @@
 package com.snowgears.machines;
 
+import com.snowgears.machines.antigrav.AntiGrav;
+import com.snowgears.machines.drill.Drill;
+import com.snowgears.machines.pump.Pump;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -49,6 +52,16 @@ public class MachineData {
         return machineItems.get(type);
     }
 
+    public ItemStack getItem(Machine machine){
+        if(machine instanceof Drill)
+            return machineItems.get(MachineType.DRILL);
+        else if(machine instanceof AntiGrav)
+            return machineItems.get(MachineType.ANTIGRAV);
+        else if(machine instanceof Pump)
+            return machineItems.get(MachineType.PUMP);
+        return null;
+    }
+
     public MachineType getMachineType(ItemStack item){
         for(Map.Entry<MachineType, ItemStack> entry : machineItems.entrySet()) {
             if (item.isSimilar(entry.getValue()))
@@ -89,6 +102,8 @@ public class MachineData {
     }
 
     private void initMachineItems(){
+
+        //TODO replace these once as individual machine config files are done
         //antigrav machine
         ItemStack gravityMachine = new ItemStack(Material.BEACON);
         ItemMeta gravityMeta = gravityMachine.getItemMeta();
@@ -100,16 +115,9 @@ public class MachineData {
         gravityMachine.setItemMeta(gravityMeta);
         machineItems.put(MachineType.ANTIGRAV, gravityMachine);
 
-        //mining machine
-        ItemStack miningMachine = new ItemStack(Material.PISTON_BASE);
-        ItemMeta miningMeta = miningMachine.getItemMeta();
-        miningMeta.setDisplayName(ChatColor.GOLD+"Drill");
-        ArrayList<String> miningLore = new ArrayList<String>();
-        miningLore.add(ChatColor.WHITE+""+ChatColor.ITALIC+"'It looks very old and heavy'");
-        miningLore.add(ChatColor.GRAY+"Requires fuel");
-        miningMeta.setLore(miningLore);
-        miningMachine.setItemMeta(miningMeta);
-        machineItems.put(MachineType.DRILL, miningMachine);
+        if(plugin.getDrillConfig().isEnabled()){
+            machineItems.put(MachineType.DRILL, plugin.getDrillConfig().getItem());
+        }
 
         //pump
         ItemStack pump = new ItemStack(Material.DISPENSER);
@@ -124,6 +132,8 @@ public class MachineData {
     }
 
     private void initMachineRecipes(){
+
+        //TODO remove these completely once all individual machine config files are done
         //antigrav machine
         ShapedRecipe gravityRecipe = new ShapedRecipe(machineItems.get(MachineType.ANTIGRAV))
                 .shape("RBR", "RFR", "PEP")
@@ -133,16 +143,6 @@ public class MachineData {
                 .setIngredient('P', Material.ENDER_PEARL)
                 .setIngredient('E', Material.ENDER_STONE);
         plugin.getServer().addRecipe(gravityRecipe);
-
-        //mining machine
-        ShapedRecipe minerRecipe = new ShapedRecipe(machineItems.get(MachineType.DRILL))
-                .shape("RPR", "RFR", "IOI")
-                .setIngredient('R', Material.BLAZE_ROD)
-                .setIngredient('P', Material.PISTON_BASE)
-                .setIngredient('F', Material.FURNACE)
-                .setIngredient('I', Material.IRON_PICKAXE)
-                .setIngredient('O', Material.OBSIDIAN);
-        plugin.getServer().addRecipe(minerRecipe);
 
         //pump
         ShapedRecipe pumpRecipe = new ShapedRecipe(machineItems.get(MachineType.PUMP))

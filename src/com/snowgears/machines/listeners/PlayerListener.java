@@ -8,7 +8,10 @@ import com.snowgears.machines.antigrav.AntiGrav;
 import com.snowgears.machines.drill.Drill;
 import com.snowgears.machines.pump.Pump;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,12 +20,17 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class PlayerListener implements Listener{
 
     public Machines plugin = Machines.getPlugin();
-    private long interactEventTick = 0;
+    private HashMap<String, Long> interactEventTick = new HashMap<>();
 
     public PlayerListener(Machines instance) {
         plugin = instance;
@@ -94,13 +102,19 @@ public class PlayerListener implements Listener{
         if(brokeBase) {
             //player is removing their own machine
             if(machine.getOwner().getUniqueId().equals(player.getUniqueId())){
-                machine.remove(true);
+                if(player.getGameMode() == GameMode.CREATIVE)
+                    machine.remove(false);
+                else
+                    machine.remove(true);
             }
             //someone is trying to break another player's machine
             else{
                 //the player has operator permissions
                 if (player.isOp() || (plugin.usePerms() && player.hasPermission("machines.operator"))) {
-                    machine.remove(true);
+                    if(player.getGameMode() == GameMode.CREATIVE)
+                        machine.remove(false);
+                    else
+                        machine.remove(true);
                 }
                 else{
                     event.setCancelled(true);
@@ -117,29 +131,40 @@ public class PlayerListener implements Listener{
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockClick(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+
         //must check the time between this and last interact event since it is thrown twice in MC 1.9
         long tickCheck = System.currentTimeMillis();
-        if(tickCheck - interactEventTick < 10) {
-            event.setCancelled(true);
+        if(interactEventTick.containsKey(player.getName())) {
+            if (tickCheck - interactEventTick.get(player.getName()) < 10) {
+                event.setCancelled(true);
+            }
         }
-        interactEventTick = tickCheck;
+        interactEventTick.put(player.getName(), tickCheck);
 
         if (event.isCancelled())
             return;
-        Player player = event.getPlayer();
 
-        if(event.getAction() == Action.RIGHT_CLICK_BLOCK){
+        if(event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK){
             Location clicked = event.getClickedBlock().getLocation();
 
             //make sure machine can not be clicked while on cooldown
             Machine machine = plugin.getMachineHandler().getMachine(clicked);
-            if(machine != null && machine.onCooldown()){
-                event.setCancelled(true);
-                return;
+            if(machine != null){
+                if(machine.onCooldown()) {
+                    event.setCancelled(true);
+                    return;
+                }
+                //TODO if player is not owner (and not OP) or does not have permissions, cancel event
+                if()
             }
+        }
+
+        if(event.getAction() == Action.RIGHT_CLICK_BLOCK){
+            Location clicked = event.getClickedBlock().getLocation();
 
             //check to see if machine base was clicked
-            machine = plugin.getMachineHandler().getMachineByBase(clicked);
+            Machine machine = plugin.getMachineHandler().getMachineByBase(clicked);
             if(machine != null){
                 player.openInventory(machine.getInventory());
                 event.setCancelled(true);
@@ -166,6 +191,35 @@ public class PlayerListener implements Listener{
                 machine.rotate();
                 event.setCancelled(true);
                 return;
+            }
+        }
+    }
+
+    //TODO this is from color portals. Implement same protection system here
+    @EventHandler
+    public void onExplosion(EntityExplodeEvent event) {
+        final ArrayList<Block> blocksToDestroy = new ArrayList<Block>(50);
+
+        //save all potential portal blocks (for sake of time during explosion)
+        Iterator<Block> blockIterator = event.blockList().iterator();
+        while (blockIterator.hasNext()) {
+
+            Block block = blockIterator.next();
+            Portal portal = null;
+            if(block.getType() == Material.WALL_SIGN){
+                portal = plugin.getPortalHandler().getPortal(block.getLocation());
+            }
+            else if (block.getType() == Material.WOOL || block.getType() == Material.WOOD_BUTTON || block.getType() == Material.STONE_BUTTON
+                    || block.getType() == Material.WOOD_PLATE || block.getType() == Material.STONE_PLATE || block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
+                portal = plugin.getPortalHandler().getPortalByFrameLocation(block.getLocation());
+            }
+
+            if (portal != null) {
+                if (plugin.getPortalProtection()) {
+                    blockIterator.remove();
+                } else {
+                    portal.remove();
+                }
             }
         }
     }

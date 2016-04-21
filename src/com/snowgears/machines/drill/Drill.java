@@ -30,12 +30,14 @@ public class Drill extends Machine {
         this.facing = BlockFace.DOWN;
 
         calculateLeverLocation(this.baseLocation);
-        inventory = Bukkit.createInventory(Bukkit.getPlayer(owner), 9, "Drill");
+        inventory = Machines.getPlugin().getDrillConfig().createInventory(this.getOwner().getPlayer());
     }
 
 
     @Override
     public boolean activate() {
+        if(!Machines.getPlugin().getDrillConfig().isEnabled())
+            return false;
         Block piston = this.getTopLocation().getBlock();
         //set the starting location to be in front of piston
         taskBlock = piston.getRelative(this.getFacing());

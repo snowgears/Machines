@@ -31,13 +31,16 @@ public abstract class Machine {
 
     public abstract boolean create();
 
-    public boolean remove(boolean dropInventory){
+    public boolean remove(boolean dropItem){
         deactivate();
         leverLocation.getBlock().setType(Material.AIR);
         topLocation.getBlock().setType(Material.AIR);
         baseLocation.getBlock().setType(Material.AIR);
-        if(dropInventory) {
-            this.dropInventory();
+        this.dropInventory();
+        if(dropItem) {
+            ItemStack machineItem = Machines.getPlugin().getMachineData().getItem(this);
+            if(machineItem != null)
+                baseLocation.getWorld().dropItemNaturally(baseLocation, machineItem);
         }
         Machines.getPlugin().getMachineHandler().removeMachine(this);
         return true;
@@ -47,7 +50,7 @@ public abstract class Machine {
         Iterator<ItemStack> it = inventory.iterator();
         while(it.hasNext()){
             ItemStack is = it.next();
-            if(is != null && is.getType() != Material.PORTAL){
+            if(is != null && is.getType() != Material.BARRIER){
                 baseLocation.getWorld().dropItemNaturally(baseLocation, is);
             }
         }
