@@ -36,7 +36,27 @@ public class DrillConfig {
     }
 
     public Inventory createInventory(Player player){
-        return Bukkit.createInventory(player, (9*inventoryRows), inventoryName);
+        Inventory inventory = Bukkit.createInventory(player, (9*inventoryRows), inventoryName);
+
+        //create the barrier item with no name
+        ItemStack fuelChamber = new ItemStack(Material.BARRIER);
+        ItemMeta im = fuelChamber.getItemMeta();
+        im.setDisplayName(" ");
+        fuelChamber.setItemMeta(im);
+
+        if(inventoryRows == 1){
+            int cornerSlot = 7;
+            inventory.setItem(cornerSlot, fuelChamber);
+        }
+        else{
+            int cornerSlot = (7 * (inventoryRows-1)) + (2 * (inventoryRows-2));
+            int rightSlot = cornerSlot + 1;
+            int bottomSlot = cornerSlot + 9;
+            inventory.setItem(cornerSlot, fuelChamber);
+            inventory.setItem(rightSlot, fuelChamber);
+            inventory.setItem(bottomSlot, fuelChamber);
+        }
+        return inventory;
     }
 
     public ItemStack getItem(){

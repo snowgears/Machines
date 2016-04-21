@@ -11,7 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,11 +20,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class PlayerListener implements Listener{
 
@@ -156,7 +156,7 @@ public class PlayerListener implements Listener{
                     return;
                 }
                 //TODO if player is not owner (and not OP) or does not have permissions, cancel event
-                if()
+                //if()
             }
         }
 
@@ -195,33 +195,45 @@ public class PlayerListener implements Listener{
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onFuelBarrierClick(InventoryClickEvent event){
+        if(event.getSlotType() == InventoryType.SlotType.CONTAINER){
+            ItemStack is = event.getCurrentItem();
+            if(is.getType() == Material.BARRIER){
+                if(is.getItemMeta().getDisplayName() != null && is.getItemMeta().getDisplayName().equals(" "))
+                    event.setCancelled(true);
+            }
+        }
+    }
+
+
     //TODO this is from color portals. Implement same protection system here
     @EventHandler
     public void onExplosion(EntityExplodeEvent event) {
-        final ArrayList<Block> blocksToDestroy = new ArrayList<Block>(50);
-
-        //save all potential portal blocks (for sake of time during explosion)
-        Iterator<Block> blockIterator = event.blockList().iterator();
-        while (blockIterator.hasNext()) {
-
-            Block block = blockIterator.next();
-            Portal portal = null;
-            if(block.getType() == Material.WALL_SIGN){
-                portal = plugin.getPortalHandler().getPortal(block.getLocation());
-            }
-            else if (block.getType() == Material.WOOL || block.getType() == Material.WOOD_BUTTON || block.getType() == Material.STONE_BUTTON
-                    || block.getType() == Material.WOOD_PLATE || block.getType() == Material.STONE_PLATE || block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
-                portal = plugin.getPortalHandler().getPortalByFrameLocation(block.getLocation());
-            }
-
-            if (portal != null) {
-                if (plugin.getPortalProtection()) {
-                    blockIterator.remove();
-                } else {
-                    portal.remove();
-                }
-            }
-        }
+//        final ArrayList<Block> blocksToDestroy = new ArrayList<Block>(50);
+//
+//        //save all potential portal blocks (for sake of time during explosion)
+//        Iterator<Block> blockIterator = event.blockList().iterator();
+//        while (blockIterator.hasNext()) {
+//
+//            Block block = blockIterator.next();
+//            Portal portal = null;
+//            if(block.getType() == Material.WALL_SIGN){
+//                portal = plugin.getPortalHandler().getPortal(block.getLocation());
+//            }
+//            else if (block.getType() == Material.WOOL || block.getType() == Material.WOOD_BUTTON || block.getType() == Material.STONE_BUTTON
+//                    || block.getType() == Material.WOOD_PLATE || block.getType() == Material.STONE_PLATE || block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
+//                portal = plugin.getPortalHandler().getPortalByFrameLocation(block.getLocation());
+//            }
+//
+//            if (portal != null) {
+//                if (plugin.getPortalProtection()) {
+//                    blockIterator.remove();
+//                } else {
+//                    portal.remove();
+//                }
+//            }
+//        }
     }
 
     //Prevent Drills from moving each other
