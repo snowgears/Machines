@@ -6,6 +6,7 @@ import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
 import com.snowgears.machines.antigrav.AntiGrav;
 import com.snowgears.machines.drill.Drill;
+import com.snowgears.machines.paver.Paver;
 import com.snowgears.machines.pump.Pump;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -61,6 +62,9 @@ public class PlayerListener implements Listener{
                         break;
                     case DRILL:
                         machine = new Drill(player.getUniqueId(), event.getBlock().getLocation());
+                        break;
+                    case PAVER:
+                        machine = new Paver(player.getUniqueId(), event.getBlock().getLocation());
                         break;
                     case PUMP:
                         machine = new Pump(player.getUniqueId(), event.getBlock().getLocation());

@@ -2,9 +2,13 @@ package com.snowgears.machines;
 
 import com.snowgears.machines.antigrav.AntiGrav;
 import com.snowgears.machines.drill.Drill;
+import com.snowgears.machines.paver.Paver;
 import com.snowgears.machines.pump.Pump;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -34,6 +38,23 @@ public class MachineData {
         initMachineRecipes();
     }
 
+    public Inventory getInfoGUI(Player player){
+        Inventory invGUI = Bukkit.createInventory(player, 9, "Machines Info");
+        if(plugin.getDrillConfig().isEnabled()){
+            if (!player.isOp() && plugin.usePerms() && !(player.hasPermission("machines.drill") || player.hasPermission("machines.operator"))) {
+                //do nothing. Don't add drill item to GUI
+            }
+            else{
+                invGUI.addItem(this.getItem(MachineType.DRILL));
+                //TODO implement all of this menu stuff with the menu class
+                //TODO also make it so when you click on this, it opens a new menu with items that you can click to:
+                // - show Crafting Recipe
+                // -
+            }
+        }
+        return invGUI;
+    }
+
     public MaterialData getInitialBaseMaterial(MachineType type){
         return machineBaseMaterials.get(type);
     }
@@ -55,6 +76,8 @@ public class MachineData {
     public ItemStack getItem(Machine machine){
         if(machine instanceof Drill)
             return machineItems.get(MachineType.DRILL);
+        else if(machine instanceof Paver)
+            return machineItems.get(MachineType.PAVER);
         else if(machine instanceof AntiGrav)
             return machineItems.get(MachineType.ANTIGRAV);
         else if(machine instanceof Pump)
@@ -78,8 +101,11 @@ public class MachineData {
         machineBaseMaterials.put(MachineType.DRILL, new MaterialData(Material.OBSIDIAN));
         machineTopMaterials.put(MachineType.DRILL, new MaterialData(Material.PISTON_BASE, (byte)1)); //piston:BlockFace.UP
 
+        machineBaseMaterials.put(MachineType.PAVER, new MaterialData(Material.OBSIDIAN));
+        machineTopMaterials.put(MachineType.PAVER, new MaterialData(Material.DISPENSER));
+
         machineBaseMaterials.put(MachineType.PUMP, new MaterialData(Material.SPONGE, (byte)1)); //WET_SPONGE
-        machineTopMaterials.put(MachineType.PUMP, new MaterialData(Material.DISPENSER, (byte)1)); //dispenser:BlockFace.UP
+        machineTopMaterials.put(MachineType.PUMP, new MaterialData(Material.SEA_LANTERN));
     }
 
     private void initMaterialsIgnored(){
@@ -103,7 +129,16 @@ public class MachineData {
 
     private void initMachineItems(){
 
+        if(plugin.getDrillConfig().isEnabled()){
+            machineItems.put(MachineType.DRILL, plugin.getDrillConfig().getItem());
+        }
+
+        if(plugin.getPaverConfig().isEnabled()){
+            machineItems.put(MachineType.PAVER, plugin.getPaverConfig().getItem());
+        }
+
         //TODO replace these once as individual machine config files are done
+
         //antigrav machine
         ItemStack gravityMachine = new ItemStack(Material.BEACON);
         ItemMeta gravityMeta = gravityMachine.getItemMeta();
@@ -115,12 +150,8 @@ public class MachineData {
         gravityMachine.setItemMeta(gravityMeta);
         machineItems.put(MachineType.ANTIGRAV, gravityMachine);
 
-        if(plugin.getDrillConfig().isEnabled()){
-            machineItems.put(MachineType.DRILL, plugin.getDrillConfig().getItem());
-        }
-
         //pump
-        ItemStack pump = new ItemStack(Material.DISPENSER);
+        ItemStack pump = new ItemStack(Material.SEA_LANTERN);
         ItemMeta pumpMeta = pump.getItemMeta();
         pumpMeta.setDisplayName(ChatColor.GOLD+"Pump");
         ArrayList<String> pumpLore = new ArrayList<String>();

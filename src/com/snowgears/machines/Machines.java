@@ -2,6 +2,7 @@ package com.snowgears.machines;
 
 import com.snowgears.machines.drill.DrillConfig;
 import com.snowgears.machines.listeners.PlayerListener;
+import com.snowgears.machines.paver.PaverConfig;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -27,6 +28,7 @@ public class Machines extends JavaPlugin {
     private MachineData machineData;
     private MachineHandler machineHandler;
     private DrillConfig drillConfig;
+    private PaverConfig paverConfig;
 
     public static Machines getPlugin() {
         return plugin;
@@ -50,9 +52,18 @@ public class Machines extends JavaPlugin {
         File drillConfigFile = new File(getDataFolder(), "drillConfig.yml");
         if (!drillConfigFile.exists()) {
             drillConfigFile.getParentFile().mkdirs();
-            copy(getResource("drillConfig.yml"), drillConfigFile);
+            copy(getResource("com/snowgears/machines/drill/drillConfig.yml"), drillConfigFile);
         }
         drillConfig = new DrillConfig();
+
+        //generate paver config file
+        File paverConfigFile = new File(getDataFolder(), "paverConfig.yml");
+        if (!paverConfigFile.exists()) {
+            paverConfigFile.getParentFile().mkdirs();
+            copy(getResource("com/snowgears/machines/paver/paverConfig.yml"), paverConfigFile);
+        }
+        paverConfig = new PaverConfig();
+
         machineData = new MachineData(this);
 
         //TODO generate other machine config files
@@ -79,6 +90,9 @@ public class Machines extends JavaPlugin {
                     player.getInventory().addItem(machineData.getItem(MachineType.ANTIGRAV));
                     if(drillConfig.isEnabled())
                         player.getInventory().addItem(machineData.getItem(MachineType.DRILL));
+                    player.sendMessage("PAVER IS ENABLED: "+paverConfig.isEnabled());
+                    if(paverConfig.isEnabled())
+                        player.getInventory().addItem(machineData.getItem(MachineType.PAVER));
                     player.getInventory().addItem(machineData.getItem(MachineType.PUMP));
                 }
                 else if(args[0].equalsIgnoreCase("list")) {
@@ -105,6 +119,9 @@ public class Machines extends JavaPlugin {
     }
     public DrillConfig getDrillConfig(){
         return drillConfig;
+    }
+    public PaverConfig getPaverConfig(){
+        return paverConfig;
     }
 
     private void copy(InputStream in, File file) {

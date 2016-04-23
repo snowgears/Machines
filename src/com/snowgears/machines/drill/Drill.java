@@ -44,7 +44,6 @@ public class Drill extends Machine {
 //        gatherMaterial();
 //        taskBlock = piston.getRelative(this.getFacing());
         int power = fuelCheck(true);
-        System.out.println("initial power = "+power);
         if(power == 0){
             deactivate();
             if(this.getOwner().getPlayer() != null)

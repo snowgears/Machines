@@ -49,8 +49,7 @@ public class Pump extends Machine {
 
         //before building top block, check that the location is clear
         if(Machines.getPlugin().getMachineData().isIgnoredMaterial(topLocation.getBlock().getType())) {
-            this.topLocation.getBlock().setType(Material.DISPENSER);
-            this.topLocation.getBlock().setData((byte)1); //dispenser:BlockFace.UP
+            this.topLocation.getBlock().setType(Material.SEA_LANTERN);
         }
         else
             return false;
