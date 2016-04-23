@@ -90,7 +90,6 @@ public class Machines extends JavaPlugin {
                     player.getInventory().addItem(machineData.getItem(MachineType.ANTIGRAV));
                     if(drillConfig.isEnabled())
                         player.getInventory().addItem(machineData.getItem(MachineType.DRILL));
-                    player.sendMessage("PAVER IS ENABLED: "+paverConfig.isEnabled());
                     if(paverConfig.isEnabled())
                         player.getInventory().addItem(machineData.getItem(MachineType.PAVER));
                     player.getInventory().addItem(machineData.getItem(MachineType.PUMP));

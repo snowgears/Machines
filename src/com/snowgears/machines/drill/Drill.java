@@ -16,7 +16,6 @@ import java.util.UUID;
 
 public class Drill extends Machine {
 
-    private boolean leverOn;
     private int fuelPower;
     private Block taskBlock;
     private int taskID;
@@ -40,9 +39,7 @@ public class Drill extends Machine {
         Block piston = this.getTopLocation().getBlock();
         //set the starting location to be in front of piston
         taskBlock = piston.getRelative(this.getFacing());
-        //gather the material of the taskBlock before starting machine task (to avoid piston head)
-//        gatherMaterial();
-//        taskBlock = piston.getRelative(this.getFacing());
+
         int power = fuelCheck(true);
         if(power == 0){
             deactivate();
@@ -96,22 +93,7 @@ public class Drill extends Machine {
         return fuelPower;
     }
 
-    private void toggleLever(){
-        if(leverOn) {
-            setLever(false);
-            leverOn = false;
-        }
-        else{
-            setLever(true);
-            leverOn = true;
-        }
-    }
-
     private void gatherMaterial(){
-        //TODO also switch order of the way these happen. Make sure if cancelled it is not added to inventory
-        //TODO add filling of water/lava in buckets
-        //TODO also make sure it halts when hitting another machine
-
         //make sure drills do not drill through other machines
         Machine m = Machines.getPlugin().getMachineHandler().getMachineByBase(taskBlock.getLocation());
         if(m != null){

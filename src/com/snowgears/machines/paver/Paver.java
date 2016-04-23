@@ -5,17 +5,18 @@ import com.snowgears.machines.Machines;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.UUID;
 
-//TODO this machine will work as the drill does, only it will take blocks out of its inventory (in order) and place them. Machine will stop once hitting a material that cannot be overwritten
 public class Paver extends Machine {
 
-    private boolean leverOn;
     private int fuelPower;
     private Block taskBlock;
     private int taskID;
@@ -93,16 +94,6 @@ public class Paver extends Machine {
         return fuelPower;
     }
 
-    private void toggleLever() {
-        if (leverOn) {
-            setLever(false);
-            leverOn = false;
-        } else {
-            setLever(true);
-            leverOn = true;
-        }
-    }
-
     private void paveMaterial() {
 
         //make sure pavers do not pave over other machines
@@ -112,12 +103,24 @@ public class Paver extends Machine {
             return;
         }
 
-        //TODO for pavers, do a block break, check if it was successful, then a block place, check if it was successful
+        //TODO not sure if this iterator is going to make actual changes to the inventory
+        //may be better just to write an inventory utility for the machines that adds and removes items better? But maybe not.
+        ItemStack is = null;
+        //take one item from first available slot and check if it is a placable block
+        Iterator<ItemStack> iterator = this.getInventory().iterator();
+        while(iterator.hasNext()){
+            is = iterator.next();
+            if(is.getType().isBlock()){
+                is.setAmount(is.getAmount()-1);
+                if(is.getAmount() == 0)
+                    is.setType(Material.AIR);
+            }
+        }
 
         //make sure that player has permission to break the current task block
         Player player = this.getOwner().getPlayer();
         if (player != null) {
-            if (Machines.getPlugin().getDrillConfig().canDrill(taskBlock.getType())) {
+            if (Machines.getPlugin().getPaverConfig().canPave(taskBlock.getType())) {
                 BlockBreakEvent event = new BlockBreakEvent(taskBlock, this.getOwner().getPlayer());
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) {
@@ -126,7 +129,19 @@ public class Paver extends Machine {
                 }
                 else{
                     //TODO check to see if player can place a block there
-
+                    BlockState oldState = taskBlock.getState();
+                    Material oldMaterial = taskBlock.getType();
+                    byte oldData = taskBlock.getData();
+                    //TODO replace this material with the next itemstack removed from inventory
+                    taskBlock.setType(Material.OBSIDIAN);
+                    //TODO if there is a problem in the future, go back and implement this so that other plugins can go back and cancel the block place event
+                    //Block placedAgainst = taskBlock.getRelative(this.getFacing().getOppositeFace());
+                    //BlockPlaceEvent e = new BlockPlaceEvent(taskBlock, oldState, placedAgainst, new ItemStack(Material.OBSIDIAN), player, true);
+                    //Bukkit.getServer().getPluginManager().callEvent(e);
+                    //if(e.isCancelled()){
+                    //    //set block back to old data
+                    //    taskBlock.setTypeIdAndData(oldMaterial.getId(), oldData, true);
+                    //}
                 }
             } else {
                 this.deactivate();
@@ -138,14 +153,14 @@ public class Paver extends Machine {
         }
 
         //TODO remove drops from inventory, or if empty, deactivate
-        for (ItemStack is : taskBlock.getDrops()) {
-            HashMap<Integer, ItemStack> overflow = this.inventory.addItem(is);
-            if (!overflow.isEmpty()) {
-                for (ItemStack drop : overflow.values()) {
-                    taskBlock.getWorld().dropItemNaturally(taskBlock.getLocation(), drop);
-                }
-            }
-        }
+//        for (ItemStack is : taskBlock.getDrops()) {
+//            HashMap<Integer, ItemStack> overflow = this.inventory.addItem(is);
+//            if (!overflow.isEmpty()) {
+//                for (ItemStack drop : overflow.values()) {
+//                    taskBlock.getWorld().dropItemNaturally(taskBlock.getLocation(), drop);
+//                }
+//            }
+//        }
 
         //simulate an added block with particle effect (after adding)
         taskBlock.getWorld().playEffect(taskBlock.getLocation(), Effect.STEP_SOUND, taskBlock.getType());
@@ -157,7 +172,6 @@ public class Paver extends Machine {
         Bukkit.getScheduler().cancelTask(taskID);
         this.setLever(false);
 
-        //cancel all tasks
         isActive = false;
         return true;
     }

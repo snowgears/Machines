@@ -23,6 +23,7 @@ public abstract class Machine {
     protected Inventory inventory;
     protected BlockFace facing;
     protected boolean isActive;
+    protected boolean leverOn;
     protected boolean onCooldown;
 
     public abstract boolean activate();
@@ -231,6 +232,7 @@ public abstract class Machine {
         //this flips the lever
         lever.setPowered(on);
         leverBlock.setData(lever.getData(), true);
+        leverOn = on;
 
         //hacky fix for state not updating bug
         Block supportBlock = leverBlock.getRelative(lever.getAttachedFace());
@@ -239,6 +241,10 @@ public abstract class Machine {
         supportState.setType(Material.AIR);
         supportState.update(true, false);
         initialSupportState.update(true);
+    }
+
+    protected void toggleLever() {
+        setLever(!leverOn);
     }
 
 }
