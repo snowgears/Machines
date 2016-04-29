@@ -8,6 +8,7 @@ import com.snowgears.machines.antigrav.AntiGrav;
 import com.snowgears.machines.drill.Drill;
 import com.snowgears.machines.paver.Paver;
 import com.snowgears.machines.pump.Pump;
+import com.snowgears.machines.turret.Turret;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -68,6 +69,9 @@ public class PlayerListener implements Listener{
                         break;
                     case PUMP:
                         machine = new Pump(player.getUniqueId(), event.getBlock().getLocation());
+                        break;
+                    case TURRET:
+                        machine = new Turret(player.getUniqueId(), event.getBlock().getLocation());
                         break;
                     default:
                         return;

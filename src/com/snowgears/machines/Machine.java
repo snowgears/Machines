@@ -51,8 +51,9 @@ public abstract class Machine {
         Iterator<ItemStack> it = inventory.iterator();
         while(it.hasNext()){
             ItemStack is = it.next();
-            if(is != null && is.getType() != Material.BARRIER){
-                baseLocation.getWorld().dropItemNaturally(baseLocation, is);
+            if(is != null){
+                if(!(is.getType() == Material.BARRIER && (" ").equals(is.getItemMeta().getDisplayName())))
+                    baseLocation.getWorld().dropItemNaturally(baseLocation, is);
             }
         }
     }

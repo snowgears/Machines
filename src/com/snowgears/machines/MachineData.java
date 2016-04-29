@@ -4,6 +4,7 @@ import com.snowgears.machines.antigrav.AntiGrav;
 import com.snowgears.machines.drill.Drill;
 import com.snowgears.machines.paver.Paver;
 import com.snowgears.machines.pump.Pump;
+import com.snowgears.machines.turret.Turret;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -74,14 +75,16 @@ public class MachineData {
     }
 
     public ItemStack getItem(Machine machine){
-        if(machine instanceof Drill)
+        if(machine instanceof AntiGrav)
+            return machineItems.get(MachineType.ANTIGRAV);
+        else if(machine instanceof Drill)
             return machineItems.get(MachineType.DRILL);
         else if(machine instanceof Paver)
             return machineItems.get(MachineType.PAVER);
-        else if(machine instanceof AntiGrav)
-            return machineItems.get(MachineType.ANTIGRAV);
         else if(machine instanceof Pump)
             return machineItems.get(MachineType.PUMP);
+        else if(machine instanceof Turret)
+            return machineItems.get(MachineType.TURRET);
         return null;
     }
 
@@ -135,6 +138,10 @@ public class MachineData {
 
         if(plugin.getPaverConfig().isEnabled()){
             machineItems.put(MachineType.PAVER, plugin.getPaverConfig().getItem());
+        }
+
+        if(plugin.getTurretConfig().isEnabled()){
+            machineItems.put(MachineType.TURRET, plugin.getTurretConfig().getItem());
         }
 
         //TODO replace these once as individual machine config files are done

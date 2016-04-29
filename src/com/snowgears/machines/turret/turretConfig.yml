@@ -1,0 +1,60 @@
+# This is the configuration file for the Turret machine. #
+# A full list of materials can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html #
+# ================================================================== #
+# &b : AQUA
+# &0 : BLACK
+# &9 : BLUE
+# &l : BOLD
+# &3 : DARK_AQUA
+# &1 : DARK_BLUE
+# &8 : DARK_GRAY
+# &2 : DARK_GREEN
+# &5 : DARK_PURPLE
+# &4 : DARK_RED
+# &6 : GOLD
+# &7 : GRAY
+# &a : GREEN
+# &o : ITALIC
+# &d : LIGHT_PURPLE
+# &k : MAGIC
+# &c : RED
+# &r : RESET
+# &m : STRIKETHROUGH
+# &n : UNDERLINE
+# &f : WHITE
+# &e : YELLOW
+
+turret:
+    # This controls whether turrets will be allowed on the server at all #
+    enabled: true
+    # These control how turrets inventories are created #
+    inventory:
+        name: 'Turret'
+        rows: 1
+    # This is used to set the turret item information #
+    item:
+        type: 'FURNACE'
+        name: '&6Turret'
+        lore:
+            1: "&f&o'A decrepit auto-sentry with a faint glow'"
+            2: "&7Requires fuel"
+    # This controls the recipe to craft turrets #
+    crafting:
+        shape: ['RDR', 'RFR', 'BEB']
+        mapping:
+            R: 'BLAZE_ROD'
+            D: 'DISPENSER'
+            F: 'FURNACE'
+            B: 'BOW'
+            E: 'EMERALD_BLOCK'
+    # This controls how fast turrets shoot. (20 ticks = 1 second) Larger numbers make turrets shoot slower #
+    speedInTicks: 5
+    # Distance (in blocks) that turrets will scan for targets #
+    scanDistance: 15
+    # The number represents how many seconds the turret will stay active per fuel #
+    fuelTypes:
+        COAL: 60
+        LAVA_BUCKET: 600
+        BLAZE_ROD: 120
+        LOG: 20
+        WOOD: 10

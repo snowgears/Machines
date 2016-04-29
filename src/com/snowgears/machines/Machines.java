@@ -3,6 +3,7 @@ package com.snowgears.machines;
 import com.snowgears.machines.drill.DrillConfig;
 import com.snowgears.machines.listeners.PlayerListener;
 import com.snowgears.machines.paver.PaverConfig;
+import com.snowgears.machines.turret.TurretConfig;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,6 +30,7 @@ public class Machines extends JavaPlugin {
     private MachineHandler machineHandler;
     private DrillConfig drillConfig;
     private PaverConfig paverConfig;
+    private TurretConfig turretConfig;
 
     public static Machines getPlugin() {
         return plugin;
@@ -64,6 +66,14 @@ public class Machines extends JavaPlugin {
         }
         paverConfig = new PaverConfig();
 
+        //generate turret config file
+        File turretConfigFile = new File(getDataFolder(), "turretConfig.yml");
+        if (!turretConfigFile.exists()) {
+            turretConfigFile.getParentFile().mkdirs();
+            copy(getResource("com/snowgears/machines/turret/turretConfig.yml"), turretConfigFile);
+        }
+        turretConfig = new TurretConfig();
+
         machineData = new MachineData(this);
 
         //TODO generate other machine config files
@@ -87,12 +97,14 @@ public class Machines extends JavaPlugin {
             } else if (args.length == 1) {
                 if(args[0].equalsIgnoreCase("give")) {
                     Player player = (Player)sender;
-                    player.getInventory().addItem(machineData.getItem(MachineType.ANTIGRAV));
                     if(drillConfig.isEnabled())
                         player.getInventory().addItem(machineData.getItem(MachineType.DRILL));
                     if(paverConfig.isEnabled())
                         player.getInventory().addItem(machineData.getItem(MachineType.PAVER));
-                    player.getInventory().addItem(machineData.getItem(MachineType.PUMP));
+                    if(turretConfig.isEnabled())
+                        player.getInventory().addItem(machineData.getItem(MachineType.TURRET));
+                    //player.getInventory().addItem(machineData.getItem(MachineType.ANTIGRAV));
+                    //player.getInventory().addItem(machineData.getItem(MachineType.PUMP));
                 }
                 else if(args[0].equalsIgnoreCase("list")) {
                     Player player = (Player)sender;
@@ -121,6 +133,9 @@ public class Machines extends JavaPlugin {
     }
     public PaverConfig getPaverConfig(){
         return paverConfig;
+    }
+    public TurretConfig getTurretConfig(){
+        return turretConfig;
     }
 
     private void copy(InputStream in, File file) {
