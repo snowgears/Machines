@@ -177,6 +177,7 @@ public class MachineHandler {
 //    }
 
     //TODO load the information from each player's file into the HashMap
+    //TODO rename file to 'new name'-'UUID' if only UUID matches
     public void loadMachines() {
 //        File fileDirectory = new File(plugin.getDataFolder(), "Data");
 //        if (!fileDirectory.exists())
@@ -190,6 +191,7 @@ public class MachineHandler {
     }
 
      // TODO load the information from each player's file into the HashMap
+    //  TODO rename file to 'new name'-'UUID' if only UUID matches
 //    private void loadMachinesFromConfig(YamlConfiguration config) {
 //
 //        if (config.getConfigurationSection("shops") == null)

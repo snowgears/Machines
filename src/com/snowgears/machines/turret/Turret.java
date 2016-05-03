@@ -23,6 +23,7 @@ public class Turret extends Machine {
     private Entity target;
     private int scanTaskID;
     private int fireTaskID;
+    private long timeOfLastFuel;
 
     public Turret(UUID owner, Location baseLocation){
         this.owner = owner;
@@ -48,6 +49,8 @@ public class Turret extends Machine {
             return false;
         }
 
+        timeOfLastFuel = System.currentTimeMillis();
+
         this.setLever(true);
         spawnArmorStand();
         ((Furnace) topLocation.getBlock().getState()).setBurnTime(Short.MAX_VALUE);
@@ -57,7 +60,24 @@ public class Turret extends Machine {
         //start the scanning task
         scanTaskID = Machines.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(Machines.getPlugin(), new Runnable() {
             public void run() {
-                //TODO check for fuel and consume
+                int fuelCheck = fuelCheck(true);
+                if(fuelCheck > 0) {
+                    long secondsSinceLastFuel = 1000*(System.currentTimeMillis() - timeOfLastFuel);
+                    //the turret has hit its active time limit and another fuel needs to be consumed
+                    if(secondsSinceLastFuel > fuelCheck){
+                        //TODO if nothing left to shoot in inventory (inventory is empty), don't go into next fuel check and stop the machine
+                        fuelCheck = fuelCheck(false);
+                        if(fuelCheck <= 0) {
+                            deactivate();
+                            return;
+                        }
+                    }
+                }
+                else {
+                    deactivate();
+                    return;
+                }
+
                 scanForTarget();
             }
         }, 0L, 20L); //scan every 20 ticks (1 second)
@@ -133,16 +153,8 @@ public class Turret extends Machine {
     private void fireProjectile(){
         if(target == null || target.isDead())
             return;
-
-        //TODO remove an item from the inventory of the machine and check that it is a projectile (or just shoot anything?)
-
-        //TODO deactivate machine if inventory is empty
-
-
-
-        ItemStack tempItem = inventory.getItem(0);
-        if(tempItem == null || tempItem.getType() == Material.AIR)
-            return;
+        if(armorStand == null || armorStand.isDead())
+            spawnArmorStand();
 
         //fire that item
         if(target != null && armorStand != null){
@@ -151,11 +163,23 @@ public class Turret extends Machine {
             //need a way to hit long targets without shooting arrow so hard it kills them instantly
             targetVector.normalize();
             targetVector.multiply(3);
-            Projectile projectile = spawnProjectileFromItemstack(tempItem, armorStand.getLocation());
-            if(projectile != null) {
-                projectile.setVelocity(targetVector);
-                if (this.getOwner().getPlayer() != null)
-                    projectile.setShooter(this.getOwner().getPlayer());
+
+            for(int i=0; i<inventory.getSize(); i++){
+                ItemStack is = inventory.getItem(i);
+                if(Machines.getPlugin().getTurretConfig().isProjectile(is)){
+                    Projectile projectile = spawnProjectileFromItemstack(is, armorStand.getLocation());
+                    if(projectile != null) {
+                        projectile.setVelocity(targetVector);
+                        if (this.getOwner().getPlayer() != null)
+                            projectile.setShooter(this.getOwner().getPlayer());
+                    }
+                    is.setAmount(is.getAmount()-1);
+                    if(is.getAmount() == 0)
+                        is = new ItemStack(Material.AIR);
+                    inventory.setItem(i, is);
+
+                    return;
+                }
             }
         }
     }
