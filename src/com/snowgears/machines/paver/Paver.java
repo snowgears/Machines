@@ -15,7 +15,6 @@ import java.util.UUID;
 
 public class Paver extends Machine {
 
-    private int fuelPower;
     private Block taskBlock;
     private int taskID;
 
@@ -65,31 +64,6 @@ public class Paver extends Machine {
 
         isActive = true;
         return true;
-    }
-
-    private int fuelCheck(boolean startCheck) {
-        if (!startCheck) {
-            if (fuelPower != 0)
-                fuelPower--;
-        }
-        if (fuelPower == 0) {
-            int lastSlot = this.getInventory().getSize() - 1;
-            ItemStack fuel = this.getInventory().getItem(lastSlot);
-            int power = 0;
-            if (fuel != null)
-                power = Machines.getPlugin().getDrillConfig().getFuelPower(fuel.getType());
-            if (!startCheck) {
-                if (power == 0) {
-                    fuelPower = 0;
-                    deactivate();
-                    return 0;
-                } else
-                    consumeFuel();
-                fuelPower = power;
-            }
-            return power;
-        }
-        return fuelPower;
     }
 
     private void paveMaterial() {

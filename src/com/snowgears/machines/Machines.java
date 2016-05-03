@@ -1,8 +1,11 @@
 package com.snowgears.machines;
 
+import com.snowgears.machines.drill.Drill;
 import com.snowgears.machines.drill.DrillConfig;
 import com.snowgears.machines.listeners.PlayerListener;
+import com.snowgears.machines.paver.Paver;
 import com.snowgears.machines.paver.PaverConfig;
+import com.snowgears.machines.turret.Turret;
 import com.snowgears.machines.turret.TurretConfig;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -56,7 +59,7 @@ public class Machines extends JavaPlugin {
             drillConfigFile.getParentFile().mkdirs();
             copy(getResource("com/snowgears/machines/drill/drillConfig.yml"), drillConfigFile);
         }
-        drillConfig = new DrillConfig();
+        drillConfig = new DrillConfig(drillConfigFile);
 
         //generate paver config file
         File paverConfigFile = new File(getDataFolder(), "paverConfig.yml");
@@ -64,7 +67,7 @@ public class Machines extends JavaPlugin {
             paverConfigFile.getParentFile().mkdirs();
             copy(getResource("com/snowgears/machines/paver/paverConfig.yml"), paverConfigFile);
         }
-        paverConfig = new PaverConfig();
+        paverConfig = new PaverConfig(paverConfigFile);
 
         //generate turret config file
         File turretConfigFile = new File(getDataFolder(), "turretConfig.yml");
@@ -72,7 +75,7 @@ public class Machines extends JavaPlugin {
             turretConfigFile.getParentFile().mkdirs();
             copy(getResource("com/snowgears/machines/turret/turretConfig.yml"), turretConfigFile);
         }
-        turretConfig = new TurretConfig();
+        turretConfig = new TurretConfig(turretConfigFile);
 
         machineData = new MachineData(this);
 
@@ -127,6 +130,17 @@ public class Machines extends JavaPlugin {
     }
     public MachineHandler getMachineHandler(){
         return machineHandler;
+    }
+    public MachineConfig getMachineConfig(Machine machine){
+        if(machine != null){
+            if(machine instanceof Drill)
+                return drillConfig;
+            else if(machine instanceof Paver)
+                return paverConfig;
+            else if(machine instanceof Turret)
+                return turretConfig;
+        }
+        return null;
     }
     public DrillConfig getDrillConfig(){
         return drillConfig;

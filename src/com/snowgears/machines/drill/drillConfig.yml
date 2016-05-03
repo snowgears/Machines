@@ -24,7 +24,7 @@
 # &f : WHITE
 # &e : YELLOW
 
-drill:
+machine:
     # This controls whether drills will be allowed on the server at all #
     enabled: true
     # These control how drills inventories are created #

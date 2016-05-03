@@ -24,7 +24,7 @@
 # &f : WHITE
 # &e : YELLOW
 
-turret:
+machine:
     # This controls whether turrets will be allowed on the server at all #
     enabled: true
     # These control how turrets inventories are created #
@@ -48,8 +48,8 @@ turret:
             B: 'BOW'
             E: 'EMERALD_BLOCK'
     # This controls how fast turrets shoot. (20 ticks = 1 second) Larger numbers make turrets shoot slower #
-    speedInTicks: 5
-    # Distance (in blocks) that turrets will scan for targets #
+    speedInTicks: 20
+    # Distance (in blocks) that turrets will scan for targets (higher numbers will cause more lag) #
     scanDistance: 15
     # The number represents how many seconds the turret will stay active per fuel #
     fuelTypes:

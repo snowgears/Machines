@@ -3,11 +3,15 @@ package com.snowgears.machines.turret;
 import com.snowgears.machines.Machine;
 import com.snowgears.machines.Machines;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Furnace;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
@@ -28,38 +32,42 @@ public class Turret extends Machine {
 
         calculateLeverLocation(baseLocation);
         inventory = Machines.getPlugin().getTurretConfig().createInventory(this.getOwner().getPlayer());
-        spawnArmorStand();
     }
 
 
     @Override
     public boolean activate() {
+        if(!Machines.getPlugin().getTurretConfig().isEnabled())
+            return false;
+
+        int power = fuelCheck(true);
+        if(power == 0){
+            deactivate();
+            if(this.getOwner().getPlayer() != null)
+                this.getOwner().getPlayer().sendMessage(ChatColor.GRAY+"The machine needs fuel in order to start.");
+            return false;
+        }
+
         this.setLever(true);
+        spawnArmorStand();
+        ((Furnace) topLocation.getBlock().getState()).setBurnTime(Short.MAX_VALUE);
+        topLocation.getBlock().setType(Material.BURNING_FURNACE);
+        setFacing(facing);
 
         //start the scanning task
         scanTaskID = Machines.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(Machines.getPlugin(), new Runnable() {
             public void run() {
                 //TODO check for fuel and consume
                 scanForTarget();
-                if(target == null){
-
-                }
             }
         }, 0L, 20L); //scan every 20 ticks (1 second)
 
         //start the shooting task
         fireTaskID = Machines.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(Machines.getPlugin(), new Runnable() {
             public void run() {
-                if(target != null){
-                    fireProjectile();
-                }
+                fireProjectile();
             }
-        }, 0L, Machines.getPlugin().getTurretConfig().getShootSpeed());
-
-        scanForTarget();
-        if(target != null){
-            fireProjectile();
-        }
+        }, 0L, Machines.getPlugin().getTurretConfig().getSpeed());
 
         isActive = true;
         return false;
@@ -70,6 +78,10 @@ public class Turret extends Machine {
         Bukkit.getScheduler().cancelTask(scanTaskID);
         Bukkit.getScheduler().cancelTask(fireTaskID);
         this.setLever(false);
+        if(armorStand != null && !armorStand.isDead())
+            armorStand.remove();
+        topLocation.getBlock().setType(Material.FURNACE);
+        setFacing(facing);
 
         target = null;
         isActive = false;
@@ -87,7 +99,6 @@ public class Turret extends Machine {
         //before building top block, check that the location is clear
         if(Machines.getPlugin().getMachineData().isIgnoredMaterial(topLocation.getBlock().getType())) {
             this.topLocation.getBlock().setType(Material.FURNACE);
-            //this.baseLocation.getBlock().setData((byte)1); //TODO set data to direction
         }
         else
             return false;
@@ -113,25 +124,39 @@ public class Turret extends Machine {
                 }
             }
         }
+
         boolean rotated = setFacing(nextDirection);
-        if(rotated) {
-            this.deactivate();
-            spawnArmorStand();
-        }
+        if(rotated)
+            deactivate();
     }
 
     private void fireProjectile(){
+        if(target == null || target.isDead())
+            return;
+
         //TODO remove an item from the inventory of the machine and check that it is a projectile (or just shoot anything?)
 
         //TODO deactivate machine if inventory is empty
 
+
+
+        ItemStack tempItem = inventory.getItem(0);
+        if(tempItem == null || tempItem.getType() == Material.AIR)
+            return;
+
         //fire that item
         if(target != null && armorStand != null){
-            Vector targetVector = target.getLocation().clone().add(0,0.5,0).toVector().subtract(armorStand.getLocation().toVector());
+            Vector targetVector = target.getLocation().clone().add(0,0.8,0).toVector().subtract(armorStand.getLocation().toVector());
+            //this way works very well for closer targets but not for long targets
+            //need a way to hit long targets without shooting arrow so hard it kills them instantly
             targetVector.normalize();
-            Projectile arrow = topLocation.getWorld().spawnArrow(armorStand.getLocation(), targetVector, (float) 3, (float) 0); //may need to tweak this a bit?
-            if(this.getOwner().getPlayer() != null)
-                arrow.setShooter(this.getOwner().getPlayer());
+            targetVector.multiply(3);
+            Projectile projectile = spawnProjectileFromItemstack(tempItem, armorStand.getLocation());
+            if(projectile != null) {
+                projectile.setVelocity(targetVector);
+                if (this.getOwner().getPlayer() != null)
+                    projectile.setShooter(this.getOwner().getPlayer());
+            }
         }
     }
 
@@ -139,6 +164,9 @@ public class Turret extends Machine {
         int scanDistance = Machines.getPlugin().getTurretConfig().getScanDistance();
         if(armorStand == null)
             spawnArmorStand();
+
+        //keep furnace lit when machine is active
+        ((Furnace) topLocation.getBlock().getState()).setBurnTime(Short.MAX_VALUE);
 
         if(isViableTarget(target))
             return;
@@ -216,5 +244,48 @@ public class Turret extends Machine {
                 break;
         }
         return null;
+    }
+
+    private Projectile spawnProjectileFromItemstack(ItemStack itemStack, Location location){
+        Projectile projectile = null;
+        switch (itemStack.getType()){
+            case ARROW:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.ARROW);
+                break;
+            case DRAGONS_BREATH:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.DRAGON_FIREBALL);
+                break;
+            case EGG:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.EGG);
+                break;
+            case ENDER_PEARL:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.ENDER_PEARL); //TODO should be fixed on 1.9.3
+                break;
+            case FIREBALL:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.FIREBALL);
+                break;
+            case LINGERING_POTION:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.LINGERING_POTION);
+                ((LingeringPotion)projectile).setItem(itemStack);
+                break;
+            case SNOW_BALL:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.SNOWBALL);
+                break;
+            case SPECTRAL_ARROW:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.SPECTRAL_ARROW);
+                break;
+            case SPLASH_POTION:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.SPLASH_POTION);
+                ((SplashPotion)projectile).setItem(itemStack);
+                break;
+            case EXP_BOTTLE:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.THROWN_EXP_BOTTLE);
+                break;
+            case TIPPED_ARROW:
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.TIPPED_ARROW);
+                ((TippedArrow)projectile).setBasePotionData(((PotionMeta)itemStack.getItemMeta()).getBasePotionData());
+                break;
+        }
+        return projectile;
     }
 }

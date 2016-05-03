@@ -24,7 +24,7 @@
 # &f : WHITE
 # &e : YELLOW
 
-paver:
+machine:
     # This controls whether pavers will be allowed on the server at all #
     enabled: true
     # These control how pavers inventories are created #
