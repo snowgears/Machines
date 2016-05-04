@@ -130,26 +130,6 @@ public class Turret extends Machine {
         return true;
     }
 
-    @Override
-    public void rotate(){
-        BlockFace[] faceCycle = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
-        BlockFace nextDirection = null;
-        if(this.facing == BlockFace.WEST)
-            nextDirection = BlockFace.NORTH;
-        else{
-            for(int i=0; i<faceCycle.length; i++){
-                if(this.facing == faceCycle[i]){
-                    nextDirection = faceCycle[i+1];
-                    break;
-                }
-            }
-        }
-
-        boolean rotated = setFacing(nextDirection);
-        if(rotated)
-            deactivate();
-    }
-
     private void fireProjectile(){
         if(target == null || target.isDead())
             return;
@@ -208,17 +188,16 @@ public class Turret extends Machine {
     private boolean isViableTarget(Entity entity){
         if(entity == null || entity.isDead())
             return false;
+        if(!Machines.getPlugin().getTurretConfig().canTarget(entity))
+            return false;
         int scanDistance = Machines.getPlugin().getTurretConfig().getScanDistance();
 
         if(entity instanceof LivingEntity){
 
-            if(entity.getType() == EntityType.ARMOR_STAND)
-                return false;
-
-            if(entity instanceof Player) //TODO remove this later and just change so it doesnt shoot owner of machine
-                return false;
-
-            //TODO may want to check for other things like hostility of mob, etc, (maybe make option for turrets to not shoot certain mobs)
+            if(entity instanceof Player){
+                if(entity.getUniqueId().equals(this.owner))
+                    return false;
+            }
 
             //if the entity is within the distance the machine is able to scan
             if (topLocation.distanceSquared(entity.getLocation()) < (scanDistance * scanDistance)) {

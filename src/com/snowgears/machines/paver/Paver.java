@@ -37,9 +37,7 @@ public class Paver extends Machine {
         Block dispenser = this.getTopLocation().getBlock();
         //set the starting location to be in front of dispenser
         taskBlock = dispenser.getRelative(this.getFacing());
-        //gather the material of the taskBlock before starting machine task (to avoid piston head)
-//        gatherMaterial();
-//        taskBlock = piston.getRelative(this.getFacing());
+
         int power = fuelCheck(true);
         if (power == 0) {
             deactivate();

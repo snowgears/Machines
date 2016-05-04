@@ -3,14 +3,18 @@ package com.snowgears.machines.turret;
 import com.snowgears.machines.MachineConfig;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 public class TurretConfig extends MachineConfig {
 
     private int scanDistance;
+    private HashMap<EntityType, Boolean> entityBlacklist;
     private HashMap<Material, Boolean> projectileMaterials;
 
     public TurretConfig(File configFile){
@@ -21,6 +25,14 @@ public class TurretConfig extends MachineConfig {
 
     public int getScanDistance(){
         return scanDistance;
+    }
+
+    public boolean canTarget(Entity entity){
+        if(entity == null || entity.isDead())
+            return false;
+        if(entityBlacklist.containsKey(entity.getType()))
+            return false;
+        return true;
     }
 
     public boolean isProjectile(ItemStack itemStack){
@@ -34,6 +46,13 @@ public class TurretConfig extends MachineConfig {
 
         if(enabled) {
             scanDistance = config.getInt("machine.scanDistance");
+
+            //populate entity blacklist
+            entityBlacklist = new HashMap<>();
+            List<String> blacklist = config.getStringList("machine.entityBlacklist");
+            for (String s : blacklist) {
+                entityBlacklist.put(EntityType.valueOf(s), true);
+            }
 
             //TODO in the future, maybe allow turrets to shoot items and get all of these from config
             projectileMaterials = new HashMap<>();

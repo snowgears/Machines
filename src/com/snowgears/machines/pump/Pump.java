@@ -60,23 +60,4 @@ public class Pump extends Machine {
 
         return true;
     }
-
-    @Override
-    public void rotate(){
-        BlockFace[] faceCycle = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
-        BlockFace nextDirection = null;
-        if(this.facing == BlockFace.WEST)
-            nextDirection = BlockFace.UP;
-        else{
-            for(int i=0; i<faceCycle.length; i++){
-                if(this.facing == faceCycle[i]){
-                    nextDirection = faceCycle[i+1];
-                    break;
-                }
-            }
-        }
-        boolean rotated = setFacing(nextDirection);
-        if(rotated)
-            this.deactivate();
-    }
 }

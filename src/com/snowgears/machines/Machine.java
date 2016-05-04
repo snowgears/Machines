@@ -1,5 +1,7 @@
 package com.snowgears.machines;
 
+import com.snowgears.machines.pump.Pump;
+import com.snowgears.machines.turret.Turret;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -102,9 +104,18 @@ public abstract class Machine {
 
     public void rotate(){
         BlockFace[] faceCycle = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.DOWN};
+        if(this instanceof Turret){
+            BlockFace[] turretFaceCycle = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+            faceCycle = turretFaceCycle;
+        }
+        else if(this instanceof Pump){
+            BlockFace[] pumpFaceCycle = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+            faceCycle = pumpFaceCycle;
+        }
+
         BlockFace nextDirection = null;
-        if(this.facing == BlockFace.DOWN)
-            nextDirection = BlockFace.UP;
+        if(this.facing == faceCycle[faceCycle.length-1])
+            nextDirection = faceCycle[0];
         else{
             for(int i=0; i<faceCycle.length; i++){
                 if(this.facing == faceCycle[i]){

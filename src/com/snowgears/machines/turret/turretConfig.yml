@@ -58,3 +58,18 @@ machine:
         BLAZE_ROD: 120
         LOG: 20
         WOOD: 10
+    # This is a list of (living) entity types that turrets will not target #
+    entityBlacklist:
+       - ARMOR_STAND
+       - CHICKEN
+       - COW
+       - HORSE
+       - IRON_GOLEM
+       - OCELOT
+       - PIG
+       - RABBIT
+       - SHEEP
+       - SLIME
+       - SNOWMAN
+       - VILLAGER
+       - WOLF
