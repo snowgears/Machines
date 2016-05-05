@@ -1,7 +1,6 @@
 package com.snowgears.machines.util;
 
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,7 +11,7 @@ public class InventoryUtils {
 
     //removes itemstack from inventory
     //returns the amount of items it could not remove
-    public static int removeItem(Inventory inventory, ItemStack itemStack, OfflinePlayer inventoryOwner) {
+    public static int removeItem(Inventory inventory, ItemStack itemStack) {
         if(inventory == null)
             return itemStack.getAmount();
         if (itemStack.getAmount() <= 0)
@@ -44,7 +43,7 @@ public class InventoryUtils {
 
     //takes an ItemStack and splits it up into multiple ItemStacks with correct stack sizes
     //then adds those items to the given inventory
-    public static int addItem(Inventory inventory, ItemStack itemStack, OfflinePlayer inventoryOwner) {
+    public static int addItem(Inventory inventory, ItemStack itemStack) {
         if(inventory == null)
             return itemStack.getAmount();
         if (itemStack.getAmount() <= 0)

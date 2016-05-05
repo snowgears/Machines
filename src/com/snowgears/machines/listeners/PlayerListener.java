@@ -46,10 +46,14 @@ public class PlayerListener implements Listener{
     public void onBlockPlace(BlockPlaceEvent event) {
         if(event.isCancelled())
             return;
+
         Player player = event.getPlayer();
         MachineType machineType = plugin.getMachineData().getMachineType(player.getItemInHand());
         if(machineType != null){
             event.setCancelled(true);
+
+            if(event.getBlock().getLocation().getBlockY() >= event.getBlock().getWorld().getMaxHeight()-1)
+                return;
 
             //if using permissions, check that the player is allowed
             String permString = "machines."+machineType.toString().toLowerCase()+".use";

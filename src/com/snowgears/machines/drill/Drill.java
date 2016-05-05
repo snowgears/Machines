@@ -67,6 +67,11 @@ public class Drill extends Machine {
     }
 
     private void gatherMaterial(){
+
+        if(taskBlock.getLocation().getBlockY() >= taskBlock.getWorld().getMaxHeight()-1) {
+            this.deactivate();
+            return;
+        }
         //make sure drills do not drill through other machines
         Machine m = Machines.getPlugin().getMachineHandler().getMachineByBase(taskBlock.getLocation());
         if(m != null){
@@ -108,24 +113,24 @@ public class Drill extends Machine {
         //fill empty buckets with water/lava if turned on in settings
         if(Machines.getPlugin().getDrillConfig().fillBuckets()){
             if(taskBlock.getType() == Material.WATER || taskBlock.getType() == Material.STATIONARY_WATER) {
-                int underflow = InventoryUtils.removeItem(this.getInventory(), new ItemStack(Material.BUCKET), this.getOwner());
+                int underflow = InventoryUtils.removeItem(this.getInventory(), new ItemStack(Material.BUCKET));
                 //a bucket was able to be removed
                 if (underflow == 0) {
-                    int overflow = InventoryUtils.addItem(this.getInventory(), new ItemStack(Material.WATER_BUCKET), this.getOwner());
+                    int overflow = InventoryUtils.addItem(this.getInventory(), new ItemStack(Material.WATER_BUCKET));
                     if(overflow > 0){
                         //not enough room for water bucket; replace original bucket
-                        InventoryUtils.addItem(this.getInventory(), new ItemStack(Material.BUCKET), this.getOwner());
+                        InventoryUtils.addItem(this.getInventory(), new ItemStack(Material.BUCKET));
                     }
                 }
             }
             else if(taskBlock.getType() == Material.LAVA || taskBlock.getType() == Material.STATIONARY_LAVA) {
-                int underflow = InventoryUtils.removeItem(this.getInventory(), new ItemStack(Material.BUCKET), this.getOwner());
+                int underflow = InventoryUtils.removeItem(this.getInventory(), new ItemStack(Material.BUCKET));
                 //a bucket was able to be removed
                 if (underflow == 0) {
-                    int overflow = InventoryUtils.addItem(this.getInventory(), new ItemStack(Material.LAVA_BUCKET), this.getOwner());
+                    int overflow = InventoryUtils.addItem(this.getInventory(), new ItemStack(Material.LAVA_BUCKET));
                     if(overflow > 0){
                         //not enough room for water bucket; replace original bucket
-                        InventoryUtils.addItem(this.getInventory(), new ItemStack(Material.BUCKET), this.getOwner());
+                        InventoryUtils.addItem(this.getInventory(), new ItemStack(Material.BUCKET));
                     }
                 }
             }
