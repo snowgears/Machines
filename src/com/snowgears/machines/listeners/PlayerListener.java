@@ -23,6 +23,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -60,9 +61,6 @@ public class PlayerListener implements Listener{
             String permString = "machines."+machineType.toString().toLowerCase()+".use";
             if(!plugin.usePerms() || (player.hasPermission("machines.operator") || player.hasPermission(permString))) {
 
-                if(player.getGameMode() == GameMode.SURVIVAL)
-                    event.getItemInHand().setAmount(event.getItemInHand().getAmount()-1);
-
                 //setup the machine
                 final Machine machine;
                 switch(machineType){
@@ -84,6 +82,9 @@ public class PlayerListener implements Listener{
                     default:
                         return;
                 }
+
+                if(player.getGameMode() == GameMode.SURVIVAL)
+                    event.getItemInHand().setAmount(event.getItemInHand().getAmount()-1);
 
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {
@@ -281,6 +282,23 @@ public class PlayerListener implements Listener{
     public void onPlayerDisconnect(PlayerQuitEvent event){
         for(Machine machine : plugin.getMachineHandler().getMachines(event.getPlayer())){
             machine.deactivate();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onCraft(CraftItemEvent event){
+        if(!(event.getWhoClicked() instanceof Player))
+            return;
+        Player player = (Player)event.getWhoClicked();
+        MachineType type = Machines.getPlugin().getMachineData().getMachineType(event.getCurrentItem());
+        if(type != null){
+            //if using permissions, check that the player is allowed
+            String permString = "machines."+type.toString().toLowerCase()+".craft";
+            if(!plugin.usePerms() || (player.hasPermission("machines.operator") || player.hasPermission(permString))){
+                //do nothing
+            }
+            else
+                event.setCancelled(true);
         }
     }
 }

@@ -3,7 +3,10 @@ package com.snowgears.machines.paver;
 import com.snowgears.machines.Machine;
 import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -57,7 +60,7 @@ public class Paver extends Machine {
         if (power == 0) {
             deactivate();
             if (this.getOwner().getPlayer() != null)
-                this.getOwner().getPlayer().sendMessage(ChatColor.GRAY + "The machine needs fuel in order to start.");
+                this.getOwner().getPlayer().sendMessage(Machines.getPlugin().getPaverConfig().getFuelMessage());
             return false;
         }
 

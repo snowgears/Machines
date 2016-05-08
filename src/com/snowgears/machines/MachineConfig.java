@@ -20,6 +20,7 @@ public class MachineConfig {
     protected int inventoryRows;
     protected ItemStack item;
     protected HashMap<Material, Integer> fuelMap;
+    protected String fuelMessage;
     protected int speed;
 
     public MachineConfig(File configFile){
@@ -64,6 +65,10 @@ public class MachineConfig {
             return fuelMap.get(type);
         }
         return 0;
+    }
+
+    public String getFuelMessage(){
+        return fuelMessage;
     }
 
     public int getSpeed(){
@@ -121,6 +126,9 @@ public class MachineConfig {
                 int power = config.getInt("machine.fuelTypes." + s);
                 fuelMap.put(m, power);
             }
+
+            fuelMessage = config.getString("machine.fuelMessage");
+            fuelMessage = ChatColor.translateAlternateColorCodes('&', fuelMessage);
         }
     }
 

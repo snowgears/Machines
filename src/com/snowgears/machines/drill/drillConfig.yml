@@ -58,6 +58,8 @@ machine:
         BLAZE_ROD: 30
         LOG: 4
         WOOD: 1
+    # This is the message that is sent to players who try to start machines that do not have fuel #
+    fuelMessage: "&7The drill needs fuel in order to start."
     # These are the materials that drills cannot break, and will halt when running into them #
     blockBlacklist:
         - ARMOR_STAND

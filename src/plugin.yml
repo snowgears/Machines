@@ -4,14 +4,23 @@ description: Build and use different machines in Minecraft!
 version: 1.0
 main: com.snowgears.machines.Machines
 permissions:
-    machines.gravity.use:
-        description: Allows player to use antigrav machines
+    machines.drill.use:
+        description: Allows player to use drill machines
         default: op
-    machines.miner.use:
-        description: Allows player to use antigrav machines
+    machines.drill.craft:
+        description: Allows player to craft drill machines
         default: op
-    machines.pump.use:
-        description: Allows player to use antigrav machines
+    machines.paver.use:
+        description: Allows player to use paver machines
+        default: op
+    machines.paver.craft:
+        description: Allows player to craft paver machines
+        default: op
+    machines.turret.use:
+        description: Allows player to use turret machines
+        default: op
+    machines.turret.craft:
+        description: Allows player to craft turret machines
         default: op
     machines.operator:
         description: Allows all operator functionality within the plugin
