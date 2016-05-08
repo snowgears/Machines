@@ -4,3 +4,10 @@ usePermissions: false
 
 # This controls whether other people/explosions are able to destroy machines #
 protection: true
+
+messages:
+    availableCommands:
+        - "[Machines] Available Commands"
+        - "   /machines list"
+        - "   /machines give"
+    machinesOwned: "&7You own [amount owned] of the [amount total] machines registered on this server."

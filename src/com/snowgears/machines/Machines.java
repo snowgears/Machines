@@ -7,6 +7,7 @@ import com.snowgears.machines.paver.Paver;
 import com.snowgears.machines.paver.PaverConfig;
 import com.snowgears.machines.turret.Turret;
 import com.snowgears.machines.turret.TurretConfig;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class Machines extends JavaPlugin {
@@ -27,6 +29,9 @@ public class Machines extends JavaPlugin {
 
     private boolean usePerms;
     private boolean useProtection;
+
+    private List<String> messageAvailableCommands;
+    private String messageOwnedMachines;
 
     private PlayerListener playerListener = new PlayerListener(this);
     private MachineData machineData;
@@ -83,6 +88,9 @@ public class Machines extends JavaPlugin {
 
         usePerms = config.getBoolean("usePermissions");
         useProtection = config.getBoolean("protection");
+
+        messageAvailableCommands = config.getStringList("messages.availableCommands");
+        messageOwnedMachines = config.getString("messages.machinesOwned");
     }
 
     @Override
@@ -93,6 +101,7 @@ public class Machines extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
         if (cmd.getName().equalsIgnoreCase("machines")) {
             if (args.length == 0) {
                 sender.sendMessage("[Machines] Available Commands:");
@@ -100,19 +109,29 @@ public class Machines extends JavaPlugin {
                 sender.sendMessage("   /machines give");
             } else if (args.length == 1) {
                 if(args[0].equalsIgnoreCase("give")) {
-                    Player player = (Player)sender;
-                    if(drillConfig.isEnabled())
-                        player.getInventory().addItem(machineData.getItem(MachineType.DRILL));
-                    if(paverConfig.isEnabled())
-                        player.getInventory().addItem(machineData.getItem(MachineType.PAVER));
-                    if(turretConfig.isEnabled())
-                        player.getInventory().addItem(machineData.getItem(MachineType.TURRET));
-                    //player.getInventory().addItem(machineData.getItem(MachineType.ANTIGRAV));
-                    //player.getInventory().addItem(machineData.getItem(MachineType.PUMP));
+                    if(sender instanceof Player){
+                        Player player = (Player) sender;
+                        //if using permissions, check that the player is allowed
+                        if(player.isOp() || (plugin.usePerms() && (player.hasPermission("machines.operator")))){
+                            if(drillConfig.isEnabled())
+                                player.getInventory().addItem(machineData.getItem(MachineType.DRILL));
+                            if(paverConfig.isEnabled())
+                                player.getInventory().addItem(machineData.getItem(MachineType.PAVER));
+                            if(turretConfig.isEnabled())
+                                player.getInventory().addItem(machineData.getItem(MachineType.TURRET));
+                        }
+                    }
                 }
                 else if(args[0].equalsIgnoreCase("list")) {
-                    Player player = (Player)sender;
-                    player.sendMessage("You own "+machineHandler.getMachines(player).size()+" of the "+machineHandler.getNumberOfMachines()+" machines registered on this server.");
+                    if(sender instanceof Player) {
+                        Player player = (Player) sender;
+
+                        messageOwnedMachines = messageOwnedMachines.replace("[amount owned]", "" + machineHandler.getMachines(player).size());
+                        messageOwnedMachines = messageOwnedMachines.replace("[amount total]", "" + machineHandler.getNumberOfMachines());
+                        messageOwnedMachines = ChatColor.translateAlternateColorCodes('&', messageOwnedMachines);
+
+                        player.sendMessage(messageOwnedMachines);
+                    }
                 }
             }
         }
