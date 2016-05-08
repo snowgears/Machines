@@ -1,8 +1,8 @@
 package com.snowgears.machines.paver;
 
 import com.snowgears.machines.Machine;
+import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
-import com.snowgears.machines.util.InventoryUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -19,6 +19,7 @@ public class Paver extends Machine {
     private int currentSlot;
 
     public Paver(UUID owner, Location baseLocation) {
+        this.type = MachineType.PAVER;
         this.owner = owner;
         this.topLocation = baseLocation;
         this.baseLocation = baseLocation.clone().add(0, 1, 0);
@@ -28,6 +29,19 @@ public class Paver extends Machine {
 
         calculateLeverLocation(this.baseLocation);
         inventory = Machines.getPlugin().getPaverConfig().createInventory(this.getOwner().getPlayer());
+    }
+
+    public Paver(UUID owner, Location base, Location top, Location lever, BlockFace facing, ItemStack[] inventoryContents){
+        this.type = MachineType.PAVER;
+        this.owner = owner;
+        this.baseLocation = base;
+        this.topLocation = top;
+        this.leverLocation = lever;
+        this.facing = facing;
+        this.fuelPower = 0;
+
+        inventory = Machines.getPlugin().getPaverConfig().createInventory(this.getOwner().getPlayer());
+        inventory.setContents(inventoryContents);
     }
 
 
@@ -90,7 +104,9 @@ public class Paver extends Machine {
             if(itemStack != null && itemStack.getType() != Material.AIR && itemStack.getType().isBlock()){
                 if(!(itemStack.getType() == Material.BARRIER && (" ").equals(itemStack.getItemMeta().getDisplayName()))) {
                     paveItem = itemStack.clone();
-                    paveItem.setAmount(1);
+                    paveItem.setAmount(paveItem.getAmount()-1);
+                    if(paveItem.getAmount() == 0)
+                        paveItem.setType(Material.AIR);
                     break;
                 }
             }
@@ -123,8 +139,10 @@ public class Paver extends Machine {
                     //    taskBlock.setTypeIdAndData(oldMaterial.getId(), oldData, true);
                     //}
 
-
-                    InventoryUtils.removeItem(inventory, paveItem);
+                    int takeSlot = currentSlot - 1;
+                    if(takeSlot < 0)
+                        takeSlot = inventory.getSize()-3;
+                    inventory.setItem(takeSlot, paveItem);
                     taskBlock.setTypeIdAndData(paveItem.getType().getId(), paveItem.getData().getData(), true);
                     //simulate an added block with particle effect (after adding)
                     taskBlock.getWorld().playEffect(taskBlock.getLocation(), Effect.STEP_SOUND, taskBlock.getType());

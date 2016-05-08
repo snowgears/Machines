@@ -1,18 +1,21 @@
 package com.snowgears.machines.pump;
 
 import com.snowgears.machines.Machine;
+import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
 public class Pump extends Machine {
 
     public Pump(UUID owner, Location baseLocation){
+        this.type = MachineType.PUMP;
         this.owner = owner;
         this.baseLocation = baseLocation;
         this.topLocation = baseLocation.clone().add(0,1,0);
@@ -20,6 +23,19 @@ public class Pump extends Machine {
 
         calculateLeverLocation(baseLocation);
         inventory = Bukkit.createInventory(Bukkit.getPlayer(owner), 9, "Pump");
+    }
+
+    public Pump(UUID owner, Location base, Location top, Location lever, BlockFace facing, ItemStack[] inventoryContents){
+        this.type = MachineType.PUMP;
+        this.owner = owner;
+        this.baseLocation = base;
+        this.topLocation = top;
+        this.leverLocation = lever;
+        this.facing = facing;
+        this.fuelPower = 0;
+
+        //inventory = Machines.getPlugin().getPumpConfig().createInventory(this.getOwner().getPlayer());
+        //inventory.setContents(inventoryContents);
     }
 
 

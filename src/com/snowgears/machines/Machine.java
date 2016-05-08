@@ -18,6 +18,7 @@ import java.util.UUID;
 
 public abstract class Machine {
 
+    protected MachineType type;
     protected UUID owner;
     protected Location baseLocation;
     protected Location topLocation;
@@ -25,6 +26,7 @@ public abstract class Machine {
     protected Inventory inventory;
     protected BlockFace facing;
     protected boolean isActive;
+    protected boolean isSetup;
     protected boolean leverOn;
     protected boolean onCooldown;
     protected int fuelPower;
@@ -42,7 +44,7 @@ public abstract class Machine {
         baseLocation.getBlock().setType(Material.AIR);
         this.dropInventory();
         if(dropItem) {
-            ItemStack machineItem = Machines.getPlugin().getMachineData().getItem(this);
+            ItemStack machineItem = Machines.getPlugin().getMachineData().getItem(type);
             if(machineItem != null)
                 baseLocation.getWorld().dropItemNaturally(baseLocation, machineItem);
         }
@@ -88,12 +90,16 @@ public abstract class Machine {
         return fuelPower;
     }
 
-    protected boolean consumeFuel(){
-        int lastSlot = this.getInventory().getSize()-1;
+    protected boolean consumeFuel() {
+        int lastSlot = this.getInventory().getSize() - 1;
         ItemStack fuel = this.getInventory().getItem(lastSlot);
-        if(fuel != null){
-            fuel.setAmount(fuel.getAmount()-1);
-            if(fuel.getAmount() == 0)
+        if (fuel != null) {
+            if (fuel.getType() == Material.LAVA_BUCKET || fuel.getType() == Material.WATER_BUCKET)
+                fuel.setType(Material.BUCKET);
+            else
+                fuel.setAmount(fuel.getAmount() - 1);
+
+            if (fuel.getAmount() == 0)
                 this.getInventory().setItem(lastSlot, new ItemStack(Material.AIR));
             else
                 this.getInventory().setItem(lastSlot, fuel);
@@ -139,6 +145,10 @@ public abstract class Machine {
         }
         else
             setFacing(nextDirection);
+    }
+
+    public MachineType getType(){
+        return type;
     }
 
     public BlockFace getFacing(){

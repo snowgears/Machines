@@ -26,6 +26,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class PlayerListener implements Listener{
 
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onBlockPlace(BlockPlaceEvent event) {
+    public void onBlockPlace(final BlockPlaceEvent event) {
         if(event.isCancelled())
             return;
 
@@ -58,6 +59,9 @@ public class PlayerListener implements Listener{
             //if using permissions, check that the player is allowed
             String permString = "machines."+machineType.toString().toLowerCase()+".use";
             if(!plugin.usePerms() || (player.hasPermission("machines.operator") || player.hasPermission(permString))) {
+
+                if(player.getGameMode() == GameMode.SURVIVAL)
+                    event.getItemInHand().setAmount(event.getItemInHand().getAmount()-1);
 
                 //setup the machine
                 final Machine machine;
@@ -270,6 +274,13 @@ public class PlayerListener implements Listener{
         if(m != null){
             if(!m.isActive())
                 event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDisconnect(PlayerQuitEvent event){
+        for(Machine machine : plugin.getMachineHandler().getMachines(event.getPlayer())){
+            machine.deactivate();
         }
     }
 }

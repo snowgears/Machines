@@ -2,6 +2,7 @@ package com.snowgears.machines.drill;
 
 
 import com.snowgears.machines.Machine;
+import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
 import com.snowgears.machines.util.InventoryUtils;
 import org.bukkit.*;
@@ -20,6 +21,7 @@ public class Drill extends Machine {
     private int taskID;
 
     public Drill(UUID owner, Location baseLocation){
+        this.type = MachineType.DRILL;
         this.owner = owner;
         this.topLocation = baseLocation;
         this.baseLocation = baseLocation.clone().add(0,1,0);
@@ -28,6 +30,19 @@ public class Drill extends Machine {
 
         calculateLeverLocation(this.baseLocation);
         inventory = Machines.getPlugin().getDrillConfig().createInventory(this.getOwner().getPlayer());
+    }
+
+    public Drill(UUID owner, Location base, Location top, Location lever, BlockFace facing, ItemStack[] inventoryContents){
+        this.type = MachineType.DRILL;
+        this.owner = owner;
+        this.baseLocation = base;
+        this.topLocation = top;
+        this.leverLocation = lever;
+        this.facing = facing;
+        this.fuelPower = 0;
+
+        inventory = Machines.getPlugin().getDrillConfig().createInventory(this.getOwner().getPlayer());
+        inventory.setContents(inventoryContents);
     }
 
 

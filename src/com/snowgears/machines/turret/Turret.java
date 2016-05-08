@@ -1,6 +1,7 @@
 package com.snowgears.machines.turret;
 
 import com.snowgears.machines.Machine;
+import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,6 +27,7 @@ public class Turret extends Machine {
     private long timeOfLastFuel;
 
     public Turret(UUID owner, Location baseLocation){
+        this.type = MachineType.TURRET;
         this.owner = owner;
         this.baseLocation = baseLocation;
         this.topLocation = baseLocation.clone().add(0,1,0);
@@ -33,6 +35,19 @@ public class Turret extends Machine {
 
         calculateLeverLocation(baseLocation);
         inventory = Machines.getPlugin().getTurretConfig().createInventory(this.getOwner().getPlayer());
+    }
+
+    public Turret(UUID owner, Location base, Location top, Location lever, BlockFace facing, ItemStack[] inventoryContents){
+        this.type = MachineType.TURRET;
+        this.owner = owner;
+        this.baseLocation = base;
+        this.topLocation = top;
+        this.leverLocation = lever;
+        this.facing = facing;
+        this.fuelPower = 0;
+
+        inventory = Machines.getPlugin().getTurretConfig().createInventory(this.getOwner().getPlayer());
+        inventory.setContents(inventoryContents);
     }
 
 
@@ -113,8 +128,6 @@ public class Turret extends Machine {
     public boolean create() {
         if(leverLocation == null)
             return false;
-        this.baseLocation.getBlock().setType(Material.RED_SANDSTONE);
-        this.baseLocation.getBlock().setData((byte)1); //chiseled red sandstone
 
         //before building top block, check that the location is clear
         if(Machines.getPlugin().getMachineData().isIgnoredMaterial(topLocation.getBlock().getType())) {
@@ -122,6 +135,8 @@ public class Turret extends Machine {
         }
         else
             return false;
+
+        this.baseLocation.getBlock().setType(Material.OBSIDIAN);
 
         Block leverBlock = leverLocation.getBlock();
         leverBlock.setType(Material.LEVER);

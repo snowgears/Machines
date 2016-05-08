@@ -1,10 +1,5 @@
 package com.snowgears.machines;
 
-import com.snowgears.machines.antigrav.AntiGrav;
-import com.snowgears.machines.drill.Drill;
-import com.snowgears.machines.paver.Paver;
-import com.snowgears.machines.pump.Pump;
-import com.snowgears.machines.turret.Turret;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -72,20 +67,6 @@ public class MachineData {
 
     public ItemStack getItem(MachineType type){
         return machineItems.get(type);
-    }
-
-    public ItemStack getItem(Machine machine){
-        if(machine instanceof AntiGrav)
-            return machineItems.get(MachineType.ANTIGRAV);
-        else if(machine instanceof Drill)
-            return machineItems.get(MachineType.DRILL);
-        else if(machine instanceof Paver)
-            return machineItems.get(MachineType.PAVER);
-        else if(machine instanceof Pump)
-            return machineItems.get(MachineType.PUMP);
-        else if(machine instanceof Turret)
-            return machineItems.get(MachineType.TURRET);
-        return null;
     }
 
     public MachineType getMachineType(ItemStack item){

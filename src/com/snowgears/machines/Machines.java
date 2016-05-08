@@ -87,7 +87,8 @@ public class Machines extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        machineHandler.saveMachines();
+        machineHandler.deactivateMachines();
     }
 
     @Override
@@ -111,7 +112,7 @@ public class Machines extends JavaPlugin {
                 }
                 else if(args[0].equalsIgnoreCase("list")) {
                     Player player = (Player)sender;
-                    player.sendMessage("You own "+machineHandler.getNumberOfMachines(player)+" of the "+machineHandler.getNumberOfMachines()+" machines registered on this server.");
+                    player.sendMessage("You own "+machineHandler.getMachines(player).size()+" of the "+machineHandler.getNumberOfMachines()+" machines registered on this server.");
                 }
             }
         }
