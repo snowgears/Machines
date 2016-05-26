@@ -34,8 +34,8 @@ public class Turret extends Machine {
         this.facing = BlockFace.NORTH;
 
         calculateLeverLocation(baseLocation, leverFace);
-
         inventory = Machines.getPlugin().getTurretConfig().createInventory(this.getOwner().getPlayer());
+        rotationCycle = new BlockFace[] {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     }
 
     public Turret(UUID owner, Location base, Location top, Location lever, BlockFace facing, ItemStack[] inventoryContents){
@@ -49,6 +49,7 @@ public class Turret extends Machine {
 
         inventory = Machines.getPlugin().getTurretConfig().createInventory(this.getOwner().getPlayer());
         inventory.setContents(inventoryContents);
+        rotationCycle = new BlockFace[] {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     }
 
 

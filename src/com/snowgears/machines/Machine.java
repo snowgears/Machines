@@ -1,8 +1,5 @@
 package com.snowgears.machines;
 
-import com.snowgears.machines.conveyer.Conveyer;
-import com.snowgears.machines.pump.Pump;
-import com.snowgears.machines.turret.Turret;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,8 +23,8 @@ public abstract class Machine {
     protected Location leverLocation;
     protected Inventory inventory;
     protected BlockFace facing;
+    protected BlockFace[] rotationCycle;
     protected boolean isActive;
-    protected boolean isSetup;
     protected boolean leverOn;
     protected boolean onCooldown;
     protected int fuelPower;
@@ -110,23 +107,13 @@ public abstract class Machine {
     }
 
     public void rotate(){
-        BlockFace[] faceCycle = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.DOWN};
-        if(this instanceof Turret || this instanceof Conveyer){
-            BlockFace[] turretFaceCycle = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
-            faceCycle = turretFaceCycle;
-        }
-        else if(this instanceof Pump){
-            BlockFace[] pumpFaceCycle = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
-            faceCycle = pumpFaceCycle;
-        }
-
         BlockFace nextDirection = null;
-        if(this.facing == faceCycle[faceCycle.length-1])
-            nextDirection = faceCycle[0];
+        if(this.facing == rotationCycle[rotationCycle.length-1])
+            nextDirection = rotationCycle[0];
         else{
-            for(int i=0; i<faceCycle.length; i++){
-                if(this.facing == faceCycle[i]){
-                    nextDirection = faceCycle[i+1];
+            for(int i=0; i<rotationCycle.length; i++){
+                if(this.facing == rotationCycle[i]){
+                    nextDirection = rotationCycle[i+1];
                     break;
                 }
             }
@@ -158,53 +145,31 @@ public abstract class Machine {
 
     @SuppressWarnings("deprecation")
     protected boolean setFacing(BlockFace direction){
-
-        //this is necessary because stairs have different data values for directions than other blocks
-        if(this instanceof Conveyer) {
-            switch (direction) {
-                case NORTH:
-                    topLocation.getBlock().setData((byte) 3);
-                    break;
-                case SOUTH:
-                    topLocation.getBlock().setData((byte) 2);
-                    break;
-                case WEST:
+        switch (direction) {
+            case DOWN:
+                switchTopAndBottom((byte) 0); //switch top and bottom with top facing down ((byte)0 = Facing DOWN)
+                break;
+            case UP:
+                if (facing == BlockFace.DOWN)
+                    switchTopAndBottom((byte) 1); //switch top and bottom with top facing up ((byte)1 = Facing UP)
+                else
                     topLocation.getBlock().setData((byte) 1);
-                    break;
-                case EAST:
-                    topLocation.getBlock().setData((byte) 0);
-                    break;
-                default:
-                    return false;
-            }
-        }
-        else {
-            switch (direction) {
-                case DOWN:
-                    switchTopAndBottom((byte) 0); //switch top and bottom with top facing down ((byte)0 = Facing DOWN)
-                    break;
-                case UP:
-                    if (facing == BlockFace.DOWN)
-                        switchTopAndBottom((byte) 1); //switch top and bottom with top facing up ((byte)1 = Facing UP)
-                    else
-                        topLocation.getBlock().setData((byte) 1);
-                    break;
-                case NORTH:
-                    topLocation.getBlock().setData((byte) 2);
-                    break;
-                case SOUTH:
-                    topLocation.getBlock().setData((byte) 3);
-                    break;
-                case WEST:
-                    topLocation.getBlock().setData((byte) 4);
-                    break;
-                case EAST:
-                    topLocation.getBlock().setData((byte) 5);
-                    break;
-                default:
-                    return false;
+                break;
+            case NORTH:
+                topLocation.getBlock().setData((byte) 2);
+                break;
+            case SOUTH:
+                topLocation.getBlock().setData((byte) 3);
+                break;
+            case WEST:
+                topLocation.getBlock().setData((byte) 4);
+                break;
+            case EAST:
+                topLocation.getBlock().setData((byte) 5);
+                break;
+            default:
+                return false;
 
-            }
         }
         facing = direction;
         return true;

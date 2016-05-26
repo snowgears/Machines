@@ -33,6 +33,7 @@ public class Drill extends Machine {
 
         calculateLeverLocation(this.baseLocation, leverFace);
         inventory = Machines.getPlugin().getDrillConfig().createInventory(this.getOwner().getPlayer());
+        rotationCycle = new BlockFace[] {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.DOWN};
     }
 
     public Drill(UUID owner, Location base, Location top, Location lever, BlockFace facing, ItemStack[] inventoryContents){
@@ -46,6 +47,7 @@ public class Drill extends Machine {
 
         inventory = Machines.getPlugin().getDrillConfig().createInventory(this.getOwner().getPlayer());
         inventory.setContents(inventoryContents);
+        rotationCycle = new BlockFace[] {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.DOWN};
     }
 
 

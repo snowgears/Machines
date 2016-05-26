@@ -32,6 +32,7 @@ public class Conveyer extends Machine {
 
         inventory = Machines.getPlugin().getConveyerConfig().createInventory(this.getOwner().getPlayer());
         entitiesOnBelt = new HashMap<>();
+        rotationCycle = new BlockFace[] {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     }
 
     public Conveyer(UUID owner, Location base, Location top, Location lever, BlockFace facing, ItemStack[] inventoryContents){
@@ -46,6 +47,7 @@ public class Conveyer extends Machine {
         inventory = Machines.getPlugin().getTurretConfig().createInventory(this.getOwner().getPlayer());
         inventory.setContents(inventoryContents);
         entitiesOnBelt = new HashMap<>();
+        rotationCycle = new BlockFace[] {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     }
 
 
@@ -165,5 +167,28 @@ public class Conveyer extends Machine {
                 break;
         }
         return null;
+    }
+
+    @Override
+    protected boolean setFacing(BlockFace direction){
+        //this is necessary because stairs have different data values for directions than other blocks
+        switch (direction) {
+            case NORTH:
+                topLocation.getBlock().setData((byte) 3);
+                break;
+            case SOUTH:
+                topLocation.getBlock().setData((byte) 2);
+                break;
+            case WEST:
+                topLocation.getBlock().setData((byte) 1);
+                break;
+            case EAST:
+                topLocation.getBlock().setData((byte) 0);
+                break;
+            default:
+                return false;
+        }
+        facing = direction;
+        return true;
     }
 }

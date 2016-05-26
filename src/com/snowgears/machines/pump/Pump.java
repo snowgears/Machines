@@ -23,6 +23,7 @@ public class Pump extends Machine {
 
         calculateLeverLocation(baseLocation, leverFace);
         inventory = Bukkit.createInventory(Bukkit.getPlayer(owner), 9, "Pump");
+        rotationCycle = new BlockFace[] {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     }
 
     public Pump(UUID owner, Location base, Location top, Location lever, BlockFace facing, ItemStack[] inventoryContents){
@@ -36,6 +37,7 @@ public class Pump extends Machine {
 
         //inventory = Machines.getPlugin().getPumpConfig().createInventory(this.getOwner().getPlayer());
         //inventory.setContents(inventoryContents);
+        rotationCycle = new BlockFace[] {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     }
 
 

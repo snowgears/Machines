@@ -32,6 +32,7 @@ public class Paver extends Machine {
 
         calculateLeverLocation(this.baseLocation, leverFace);
         inventory = Machines.getPlugin().getPaverConfig().createInventory(this.getOwner().getPlayer());
+        rotationCycle = new BlockFace[] {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.DOWN};
     }
 
     public Paver(UUID owner, Location base, Location top, Location lever, BlockFace facing, ItemStack[] inventoryContents){
@@ -45,6 +46,7 @@ public class Paver extends Machine {
 
         inventory = Machines.getPlugin().getPaverConfig().createInventory(this.getOwner().getPlayer());
         inventory.setContents(inventoryContents);
+        rotationCycle = new BlockFace[] {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.DOWN};
     }
 
 
