@@ -5,6 +5,7 @@ import com.snowgears.machines.Machine;
 import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
 import com.snowgears.machines.antigrav.AntiGrav;
+import com.snowgears.machines.conveyer.Conveyer;
 import com.snowgears.machines.drill.Drill;
 import com.snowgears.machines.paver.Paver;
 import com.snowgears.machines.pump.Pump;
@@ -81,6 +82,9 @@ public class PlayerListener implements Listener{
                         break;
                     case TURRET:
                         machine = new Turret(player.getUniqueId(), event.getBlock().getLocation(), leverFace);
+                        break;
+                    case CONVEYER:
+                        machine = new Conveyer(player.getUniqueId(), event.getBlock().getLocation(), leverFace);
                         break;
                     default:
                         return;

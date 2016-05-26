@@ -1,5 +1,6 @@
 package com.snowgears.machines;
 
+import com.snowgears.machines.conveyer.Conveyer;
 import com.snowgears.machines.drill.Drill;
 import com.snowgears.machines.paver.Paver;
 import com.snowgears.machines.turret.Turret;
@@ -237,6 +238,9 @@ public class MachineHandler {
                 break;
             case TURRET:
                 machine = new Turret(owner, base, top, lever, facing, inventoryContents);
+                break;
+            case CONVEYER:
+                machine = new Conveyer(owner, base, top, lever, facing, inventoryContents);
                 break;
         }
         if(machine != null)

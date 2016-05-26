@@ -92,10 +92,10 @@ public class MachineConfig {
             name = ChatColor.translateAlternateColorCodes('&', name);
             itemMeta.setDisplayName(name);
             List<String> lore = new ArrayList<>();
-            Map<String, Object> loreStrings = config.getConfigurationSection("machine.item.lore").getValues(false);
+            List<String> loreStrings = config.getStringList("machine.item.lore");
             if (loreStrings != null) {
-                for (Object s : loreStrings.values()) {
-                    lore.add(ChatColor.translateAlternateColorCodes('&', (String)s));
+                for (String s : loreStrings) {
+                    lore.add(ChatColor.translateAlternateColorCodes('&', s));
                 }
             }
             itemMeta.setLore(lore);

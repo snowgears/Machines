@@ -8,7 +8,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,9 +17,6 @@ public class MachineData {
 
     private Machines plugin;
 
-    private HashMap<MachineType,MaterialData> machineBaseMaterials = new HashMap<MachineType, MaterialData>();
-    private HashMap<MachineType,MaterialData> machineTopMaterials = new HashMap<MachineType, MaterialData>();
-
     //all of the materials that can be overwritten by machines
     private HashMap<Material, Boolean> materialsIgnored = new HashMap<Material, Boolean>();
 
@@ -28,10 +24,9 @@ public class MachineData {
 
     public MachineData(Machines instance){
         plugin = instance;
-        initMachineMaterials();
         initMaterialsIgnored();
         initMachineItems();
-        initMachineRecipes();
+       // initMachineRecipes(); //NOT NEEDED ANYMORE SINCE ALL RECIPES ARE IN MACHINE CONFIGS
     }
 
     public Inventory getInfoGUI(Player player){
@@ -51,14 +46,6 @@ public class MachineData {
         return invGUI;
     }
 
-    public MaterialData getInitialBaseMaterial(MachineType type){
-        return machineBaseMaterials.get(type);
-    }
-
-    public MaterialData getInitialTopMaterial(MachineType type){
-        return machineTopMaterials.get(type);
-    }
-
     public boolean isIgnoredMaterial(Material material){
         if(materialsIgnored.get(material) != null)
             return true;
@@ -75,21 +62,6 @@ public class MachineData {
                 return entry.getKey();
         }
         return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    private void initMachineMaterials(){
-        machineBaseMaterials.put(MachineType.ANTIGRAV, new MaterialData(Material.ENDER_STONE));
-        machineTopMaterials.put(MachineType.ANTIGRAV, new MaterialData(Material.BEACON));
-
-        machineBaseMaterials.put(MachineType.DRILL, new MaterialData(Material.OBSIDIAN));
-        machineTopMaterials.put(MachineType.DRILL, new MaterialData(Material.PISTON_BASE, (byte)1)); //piston:BlockFace.UP
-
-        machineBaseMaterials.put(MachineType.PAVER, new MaterialData(Material.OBSIDIAN));
-        machineTopMaterials.put(MachineType.PAVER, new MaterialData(Material.DISPENSER));
-
-        machineBaseMaterials.put(MachineType.PUMP, new MaterialData(Material.SPONGE, (byte)1)); //WET_SPONGE
-        machineTopMaterials.put(MachineType.PUMP, new MaterialData(Material.SEA_LANTERN));
     }
 
     private void initMaterialsIgnored(){
@@ -123,6 +95,10 @@ public class MachineData {
 
         if(plugin.getTurretConfig().isEnabled()){
             machineItems.put(MachineType.TURRET, plugin.getTurretConfig().getItem());
+        }
+
+        if(plugin.getConveyerConfig().isEnabled()){
+            machineItems.put(MachineType.CONVEYER, plugin.getConveyerConfig().getItem());
         }
 
         //TODO replace these once as individual machine config files are done

@@ -36,8 +36,8 @@ machine:
         type: 'FURNACE'
         name: '&6Turret'
         lore:
-            1: "&f&o'A decrepit auto-sentry with a faint glow'"
-            2: "&7Requires fuel"
+            - "&f&o'A decrepit auto-sentry with a faint glow'"
+            - "&7Requires fuel"
     # This controls the recipe to craft turrets #
     crafting:
         shape: ['RDR', 'RFR', 'BOB']

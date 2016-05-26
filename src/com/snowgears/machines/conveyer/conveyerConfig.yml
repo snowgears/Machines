@@ -1,0 +1,80 @@
+# This is the configuration file for the Conveyer machine. #
+# A full list of materials can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html #
+# ================================================================== #
+# &b : AQUA
+# &0 : BLACK
+# &9 : BLUE
+# &l : BOLD
+# &3 : DARK_AQUA
+# &1 : DARK_BLUE
+# &8 : DARK_GRAY
+# &2 : DARK_GREEN
+# &5 : DARK_PURPLE
+# &4 : DARK_RED
+# &6 : GOLD
+# &7 : GRAY
+# &a : GREEN
+# &o : ITALIC
+# &d : LIGHT_PURPLE
+# &k : MAGIC
+# &c : RED
+# &r : RESET
+# &m : STRIKETHROUGH
+# &n : UNDERLINE
+# &f : WHITE
+# &e : YELLOW
+
+machine:
+    # This controls whether conveyers will be allowed on the server at all #
+    enabled: true
+    # These control how conveyers inventories are created #
+    inventory:
+        name: 'Conveyer'
+        rows: 1
+    # This is used to set the conveyer item information #
+    item:
+        type: 'QUARTZ_STAIRS'
+        name: '&6Conveyer'
+        lore:
+           - "&f&o'A rickety old conveyer machine'"
+           - "&7Requires conveyer belts"
+           - "&7Requires fuel"
+    # This controls the recipe to craft conveyers #
+    crafting:
+        shape: ['RQR', 'RFR', 'BOB']
+        mapping:
+            R: 'BLAZE_ROD'
+            Q: 'QUARTZ_STAIRS'
+            F: 'FURNACE'
+            B: 'REDSTONE_BLOCK'
+            O: 'OBSIDIAN'
+
+    # This is used to set the conveyer belt item information #
+    beltItem:
+        # The belt item will always be PACKED_ICE because it is necessary for conveyers to perform properly #
+        name: '&7Conveyer Belt'
+        lore:
+            - "&f&o'Fits into a conveyer machine'"
+    # This controls the recipe to craft conveyer belts #
+    beltCrafting:
+        shape: [' W ', ' R ']
+        mapping:
+            W: 'WOOD'
+            R: 'REDSTONE'
+        yield: 1
+
+    # The number represents how many seconds the conveyer will stay active per fuel #
+    fuelTypes:
+        COAL: 60
+        LAVA_BUCKET: 600
+        BLAZE_ROD: 120
+        LOG: 20
+        WOOD: 10
+    # This is the maximum number of blocks away from the machine that a conveyer will push entities on its belt #
+    # Increasing this number may put more stress on the server resources #
+    maxDistance: 20
+    # This is the message that is sent to players who try to start machines that do not have fuel #
+    fuelMessage: "&7The conveyer needs fuel in order to start."
+    # This is a list of entity types that conveyers will not push #
+    entityBlacklist:
+       - WOLF

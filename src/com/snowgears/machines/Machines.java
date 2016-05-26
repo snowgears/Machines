@@ -1,5 +1,7 @@
 package com.snowgears.machines;
 
+import com.snowgears.machines.conveyer.Conveyer;
+import com.snowgears.machines.conveyer.ConveyerConfig;
 import com.snowgears.machines.drill.Drill;
 import com.snowgears.machines.drill.DrillConfig;
 import com.snowgears.machines.listeners.PlayerListener;
@@ -39,6 +41,7 @@ public class Machines extends JavaPlugin {
     private DrillConfig drillConfig;
     private PaverConfig paverConfig;
     private TurretConfig turretConfig;
+    private ConveyerConfig conveyerConfig;
 
     public static Machines getPlugin() {
         return plugin;
@@ -82,6 +85,14 @@ public class Machines extends JavaPlugin {
         }
         turretConfig = new TurretConfig(turretConfigFile);
 
+        //generate conveyer config file
+        File conveyerConfigFile = new File(getDataFolder(), "conveyerConfig.yml");
+        if (!conveyerConfigFile.exists()) {
+            conveyerConfigFile.getParentFile().mkdirs();
+            copy(getResource("com/snowgears/machines/conveyer/conveyerConfig.yml"), conveyerConfigFile);
+        }
+        conveyerConfig = new ConveyerConfig(conveyerConfigFile);
+
         machineData = new MachineData(this);
 
         //TODO generate other machine config files
@@ -119,6 +130,8 @@ public class Machines extends JavaPlugin {
                                 player.getInventory().addItem(machineData.getItem(MachineType.PAVER));
                             if(turretConfig.isEnabled())
                                 player.getInventory().addItem(machineData.getItem(MachineType.TURRET));
+                            if(conveyerConfig.isEnabled())
+                                player.getInventory().addItem(machineData.getItem(MachineType.CONVEYER));
                         }
                     }
                 }
@@ -159,6 +172,8 @@ public class Machines extends JavaPlugin {
                 return paverConfig;
             else if(machine instanceof Turret)
                 return turretConfig;
+            else if(machine instanceof Conveyer)
+                return conveyerConfig;
         }
         return null;
     }
@@ -170,6 +185,9 @@ public class Machines extends JavaPlugin {
     }
     public TurretConfig getTurretConfig(){
         return turretConfig;
+    }
+    public ConveyerConfig getConveyerConfig(){
+        return conveyerConfig;
     }
 
     private void copy(InputStream in, File file) {
