@@ -12,6 +12,7 @@ import org.bukkit.block.Furnace;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.material.Lever;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
@@ -25,14 +26,15 @@ public class Turret extends Machine {
     private int fireTaskID;
     private long timeOfLastFuel;
 
-    public Turret(UUID owner, Location baseLocation){
+    public Turret(UUID owner, Location baseLocation, BlockFace leverFace){
         this.type = MachineType.TURRET;
         this.owner = owner;
         this.baseLocation = baseLocation;
         this.topLocation = baseLocation.clone().add(0,1,0);
         this.facing = BlockFace.NORTH;
 
-        calculateLeverLocation(baseLocation);
+        calculateLeverLocation(baseLocation, leverFace);
+
         inventory = Machines.getPlugin().getTurretConfig().createInventory(this.getOwner().getPlayer());
     }
 
@@ -140,6 +142,7 @@ public class Turret extends Machine {
         Block leverBlock = leverLocation.getBlock();
         leverBlock.setType(Material.LEVER);
         setDirectionOfLever(leverBlock, baseLocation.getBlock().getFace(leverBlock));
+        setFacing(((Lever)leverBlock.getState().getData()).getAttachedFace());
 
         return true;
     }

@@ -15,14 +15,14 @@ import java.util.UUID;
 public class AntiGrav extends Machine {
 
 
-    public AntiGrav(UUID owner, Location baseLocation){
+    public AntiGrav(UUID owner, Location baseLocation, BlockFace leverFace){
         this.type = MachineType.ANTIGRAV;
         this.owner = owner;
         this.baseLocation = baseLocation;
         this.topLocation = baseLocation.clone().add(0,1,0);
         this.facing = BlockFace.UP;
 
-        calculateLeverLocation(baseLocation);
+        calculateLeverLocation(baseLocation, leverFace);
         inventory = Bukkit.createInventory(Bukkit.getPlayer(owner), 9, "AntiGrav Machine");
     }
 

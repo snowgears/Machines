@@ -23,7 +23,7 @@ public class Drill extends Machine {
     private Block taskBlock;
     private int taskID;
 
-    public Drill(UUID owner, Location baseLocation){
+    public Drill(UUID owner, Location baseLocation, BlockFace leverFace){
         this.type = MachineType.DRILL;
         this.owner = owner;
         this.topLocation = baseLocation;
@@ -31,7 +31,7 @@ public class Drill extends Machine {
         this.facing = BlockFace.DOWN;
         this.fuelPower = 0;
 
-        calculateLeverLocation(this.baseLocation);
+        calculateLeverLocation(this.baseLocation, leverFace);
         inventory = Machines.getPlugin().getDrillConfig().createInventory(this.getOwner().getPlayer());
     }
 

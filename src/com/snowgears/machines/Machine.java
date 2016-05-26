@@ -192,7 +192,8 @@ public abstract class Machine {
     protected boolean switchTopAndBottom(byte data){
         //make sure machine has room for new lever location first
         Location originalLever = leverLocation.clone();
-        boolean hasRoom = this.calculateLeverLocation(topLocation);
+        BlockFace leverFace = ((Lever)leverLocation.getBlock().getState().getData()).getAttachedFace();
+        boolean hasRoom = this.calculateLeverLocation(topLocation, leverFace);
         if(!hasRoom){
             leverLocation = originalLever;
             return false;
@@ -245,10 +246,10 @@ public abstract class Machine {
         return onCooldown;
     }
 
-    protected boolean calculateLeverLocation(Location baseLocation){
+    protected boolean calculateLeverLocation(Location baseLocation, BlockFace leverFace){
         leverLocation = null;
         Block base = baseLocation.getBlock();
-        BlockFace[] faces = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+        BlockFace[] faces = {leverFace, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
         for(BlockFace face : faces){
             if(Machines.getPlugin().getMachineData().isIgnoredMaterial(base.getRelative(face).getType())){
                 leverLocation = base.getRelative(face).getLocation();

@@ -21,7 +21,7 @@ public class Paver extends Machine {
     private int taskID;
     private int currentSlot;
 
-    public Paver(UUID owner, Location baseLocation) {
+    public Paver(UUID owner, Location baseLocation, BlockFace leverFace) {
         this.type = MachineType.PAVER;
         this.owner = owner;
         this.topLocation = baseLocation;
@@ -30,7 +30,7 @@ public class Paver extends Machine {
         this.fuelPower = 0;
         this.currentSlot = 0;
 
-        calculateLeverLocation(this.baseLocation);
+        calculateLeverLocation(this.baseLocation, leverFace);
         inventory = Machines.getPlugin().getPaverConfig().createInventory(this.getOwner().getPlayer());
     }
 

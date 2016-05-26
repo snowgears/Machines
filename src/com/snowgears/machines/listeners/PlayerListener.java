@@ -14,6 +14,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -61,23 +62,25 @@ public class PlayerListener implements Listener{
             String permString = "machines."+machineType.toString().toLowerCase()+".use";
             if(!plugin.usePerms() || (player.hasPermission("machines.operator") || player.hasPermission(permString))) {
 
+                BlockFace leverFace = yawToFace(player.getLocation().getYaw()).getOppositeFace();
+
                 //setup the machine
                 final Machine machine;
                 switch(machineType){
                     case ANTIGRAV:
-                        machine = new AntiGrav(player.getUniqueId(), event.getBlock().getLocation());
+                        machine = new AntiGrav(player.getUniqueId(), event.getBlock().getLocation(), leverFace);
                         break;
                     case DRILL:
-                        machine = new Drill(player.getUniqueId(), event.getBlock().getLocation());
+                        machine = new Drill(player.getUniqueId(), event.getBlock().getLocation(), leverFace);
                         break;
                     case PAVER:
-                        machine = new Paver(player.getUniqueId(), event.getBlock().getLocation());
+                        machine = new Paver(player.getUniqueId(), event.getBlock().getLocation(), leverFace);
                         break;
                     case PUMP:
-                        machine = new Pump(player.getUniqueId(), event.getBlock().getLocation());
+                        machine = new Pump(player.getUniqueId(), event.getBlock().getLocation(), leverFace);
                         break;
                     case TURRET:
-                        machine = new Turret(player.getUniqueId(), event.getBlock().getLocation());
+                        machine = new Turret(player.getUniqueId(), event.getBlock().getLocation(), leverFace);
                         break;
                     default:
                         return;
@@ -300,5 +303,10 @@ public class PlayerListener implements Listener{
             else
                 event.setCancelled(true);
         }
+    }
+
+    public static BlockFace yawToFace(float yaw) {
+        final BlockFace[] axis = {BlockFace.SOUTH, BlockFace.WEST, BlockFace.NORTH, BlockFace.EAST};
+        return axis[Math.round(yaw / 90f) & 0x3];
     }
 }
