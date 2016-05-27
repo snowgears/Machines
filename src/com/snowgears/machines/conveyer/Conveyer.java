@@ -3,15 +3,19 @@ package com.snowgears.machines.conveyer;
 import com.snowgears.machines.Machine;
 import com.snowgears.machines.MachineType;
 import com.snowgears.machines.Machines;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Lever;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -20,6 +24,8 @@ public class Conveyer extends Machine {
     private HashMap<Entity, Boolean> entitiesOnBelt = new HashMap<>();
     private Vector directionVector; //this will be the direction and velocity in which to push entities
     private long timeOfLastFuel;
+    private int scanTaskID;
+    private int beltTaskID;
 
     public Conveyer(UUID owner, Location baseLocation, BlockFace leverFace){
         this.type = MachineType.CONVEYER;
@@ -68,39 +74,41 @@ public class Conveyer extends Machine {
 
         this.setLever(true);
 
-        //TODO set directionVector
+        createDirectionVector();
+
+        //TODO populate beltLocations HashMap by recursively scanning in direction of machine for belts
+        //break when one is not found or when maxDistance is hit (beltLocations should never be more than maxDistance)
+
+        //start the scanning task
+        scanTaskID = Machines.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(Machines.getPlugin(), new Runnable() {
+            public void run() {
+                int fuelCheck = fuelCheck(true);
+                if(fuelCheck > 0) {
+                    long secondsSinceLastFuel = 1000*(System.currentTimeMillis() - timeOfLastFuel);
+                    //the turret has hit its active time limit and another fuel needs to be consumed
+                    if(secondsSinceLastFuel > fuelCheck){
+                        fuelCheck = fuelCheck(false);
+                        if(fuelCheck <= 0) {
+                            deactivate();
+                            return;
+                        }
+                    }
+                }
+                else {
+                    deactivate();
+                    return;
+                }
+
+                scanForEntities();
+            }
+        }, 0L, 40L); //scan every 2 seconds
 //
-//        //start the scanning task
-//        scanTaskID = Machines.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(Machines.getPlugin(), new Runnable() {
-//            public void run() {
-//                int fuelCheck = fuelCheck(true);
-//                if(fuelCheck > 0) {
-//                    long secondsSinceLastFuel = 1000*(System.currentTimeMillis() - timeOfLastFuel);
-//                    //the turret has hit its active time limit and another fuel needs to be consumed
-//                    if(secondsSinceLastFuel > fuelCheck){
-//                        //TODO if nothing left to shoot in inventory (inventory is empty), don't go into next fuel check and stop the machine
-//                        fuelCheck = fuelCheck(false);
-//                        if(fuelCheck <= 0) {
-//                            deactivate();
-//                            return;
-//                        }
-//                    }
-//                }
-//                else {
-//                    deactivate();
-//                    return;
-//                }
-//
-//                scanForTarget();
-//            }
-//        }, 0L, 20L); //scan every 20 ticks (1 second)
-//
-//        //start the shooting task
-//        fireTaskID = Machines.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(Machines.getPlugin(), new Runnable() {
-//            public void run() {
-//                fireProjectile();
-//            }
-//        }, 0L, Machines.getPlugin().getTurretConfig().getSpeed());
+        //start the belt pushing task
+        beltTaskID = Machines.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(Machines.getPlugin(), new Runnable() {
+            public void run() {
+                pushBelt();
+            }
+        }, 0L, 30L);
 
         isActive = true;
         return false;
@@ -108,8 +116,8 @@ public class Conveyer extends Machine {
 
     @Override
     public boolean deactivate() {
-     //   Bukkit.getScheduler().cancelTask(scanTaskID);
-     //   Bukkit.getScheduler().cancelTask(fireTaskID);
+        Bukkit.getScheduler().cancelTask(scanTaskID);
+        Bukkit.getScheduler().cancelTask(beltTaskID);
         this.setLever(false);
 
         entitiesOnBelt.clear();
@@ -141,32 +149,61 @@ public class Conveyer extends Machine {
     }
 
     private void pushBelt(){
-        int beltTask = Machines.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(Machines.getPlugin(), new Runnable() {
-            public void run() {
-                for(Entity e : entitiesOnBelt.keySet()){
-                    //TODO check that each entity is on the belt, if not remove it
-                    Vector v = new Vector(0, 0, 0.1);
-                    e.setVelocity(v);
-                }
+        for(Entity e : entitiesOnBelt.keySet()) {
+            //TODO check that each entity is on the belt, if not remove it
+            //TODO check that each entity is not more than maxDistance away from machine
+            if (e.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.PACKED_ICE) {
+                if(e instanceof Item)
+                    e.setVelocity(directionVector);
+                else
+                    e.setVelocity(directionVector.clone().multiply(3));
             }
-        }, 0L, 30L); //1.5 seconds
+            //else
+            //TODO remove entity from entitiesOnBelt
+        }
     }
 
-    private Location calculateFrontMarkerLocation(){
-        int scanDistance = Machines.getPlugin().getTurretConfig().getScanDistance();
-        switch (facing){
+    private void scanForEntities(){
+        int maxDistance = Machines.getPlugin().getConveyerConfig().getMaxDistance();
+        Collection<Entity> entities = new ArrayList<>();
+        switch(facing){
             case NORTH:
-                return topLocation.clone().add(0,0,-scanDistance);
-            case EAST:
-                return topLocation.clone().add(scanDistance,0,0);
-            case SOUTH:
-                return topLocation.clone().add(0,0,scanDistance);
-            case WEST:
-                return topLocation.clone().add(-scanDistance,0,0);
-            default:
+                entities = topLocation.getWorld().getNearbyEntities(topLocation, 2, 2, -maxDistance);
                 break;
+            case EAST:
+                entities = topLocation.getWorld().getNearbyEntities(topLocation, maxDistance, 2, 2);
+                break;
+            case SOUTH:
+                entities = topLocation.getWorld().getNearbyEntities(topLocation, 2, 2, maxDistance);
+                break;
+            case WEST:
+                entities = topLocation.getWorld().getNearbyEntities(topLocation, -maxDistance, 2, 2);
+                break;
+            default:
+                return;
         }
-        return null;
+        for(Entity e : entities){
+            entitiesOnBelt.put(e, true);
+        }
+    }
+
+    private void createDirectionVector(){
+        switch(facing){
+            case NORTH:
+                directionVector = new Vector(0, 0, -0.1);
+                break;
+            case EAST:
+                directionVector = new Vector(0.1, 0, 0);
+                break;
+            case SOUTH:
+                directionVector = new Vector(0, 0, 0.1);
+                break;
+            case WEST:
+                directionVector = new Vector(-0.1, 0, 0);
+                break;
+            default:
+                return;
+        }
     }
 
     @Override

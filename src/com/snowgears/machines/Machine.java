@@ -247,15 +247,23 @@ public abstract class Machine {
     }
 
     @SuppressWarnings("deprecation")
-    protected void setDirectionOfLever(Block lever, BlockFace bf){
-        if(bf == BlockFace.NORTH)
-            lever.setData((byte)4);
-        else if(bf == BlockFace.EAST)
-            lever.setData((byte)1);
-        else if(bf == BlockFace.SOUTH)
-            lever.setData((byte)3);
-        else if(bf == BlockFace.WEST)
-            lever.setData((byte)2);
+    protected void setDirectionOfLever(Block lever, BlockFace face){
+        switch(face) {
+            case NORTH:
+                lever.setData((byte) 4);
+                break;
+            case EAST:
+                lever.setData((byte) 1);
+                break;
+            case SOUTH:
+                lever.setData((byte) 3);
+                break;
+            case WEST:
+                lever.setData((byte) 2);
+                break;
+            default:
+                return;
+        }
     }
 
     @SuppressWarnings("deprecation")
