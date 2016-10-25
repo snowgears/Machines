@@ -83,6 +83,8 @@ public class Drill extends Machine {
         }, 0L, Machines.getPlugin().getDrillConfig().getSpeed());
 
         isActive = true;
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getDrillConfig().getSoundActionOn(), 1.0F, 1.0F);
+
         return true;
     }
 
@@ -169,6 +171,7 @@ public class Drill extends Machine {
 
         //cancel all tasks
         isActive = false;
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getDrillConfig().getSoundActionOff(), 0.5F, 1.0F);
         return true;
     }
 
@@ -194,5 +197,11 @@ public class Drill extends Machine {
         leverBlock.setType(Material.LEVER);
         setDirectionOfLever(leverBlock, baseLocation.getBlock().getFace(leverBlock));
         return true;
+    }
+
+    @Override
+    public void rotate(){
+        super.rotate();
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getDrillConfig().getSoundActionRotate(), 1.0F, 1.0F);
     }
 }

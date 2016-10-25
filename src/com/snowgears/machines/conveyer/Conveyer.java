@@ -50,7 +50,7 @@ public class Conveyer extends Machine {
         this.facing = facing;
         this.fuelPower = 0;
 
-        inventory = Machines.getPlugin().getTurretConfig().createInventory(this.getOwner().getPlayer());
+        inventory = Machines.getPlugin().getConveyerConfig().createInventory(this.getOwner().getPlayer());
         inventory.setContents(inventoryContents);
         entitiesOnBelt = new HashMap<>();
         rotationCycle = new BlockFace[] {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
@@ -110,6 +110,7 @@ public class Conveyer extends Machine {
             }
         }, 0L, 30L);
 
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getConveyerConfig().getSoundActionOn(), 1.0F, 1.0F);
         isActive = true;
         return false;
     }
@@ -121,6 +122,8 @@ public class Conveyer extends Machine {
         this.setLever(false);
 
         entitiesOnBelt.clear();
+
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getConveyerConfig().getSoundActionOff(), 0.5F, 1.0F);
         isActive = false;
         return false;
     }
@@ -158,8 +161,6 @@ public class Conveyer extends Machine {
                 else
                     e.setVelocity(directionVector.clone().multiply(3));
             }
-            //else
-            //TODO remove entity from entitiesOnBelt
         }
     }
 
@@ -182,6 +183,7 @@ public class Conveyer extends Machine {
             default:
                 return;
         }
+        entitiesOnBelt.clear();
         for(Entity e : entities){
             entitiesOnBelt.put(e, true);
         }
@@ -227,5 +229,11 @@ public class Conveyer extends Machine {
         }
         facing = direction;
         return true;
+    }
+
+    @Override
+    public void rotate(){
+        super.rotate();
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getConveyerConfig().getSoundActionRotate(), 1.0F, 1.0F);
     }
 }

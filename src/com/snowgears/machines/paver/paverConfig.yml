@@ -58,6 +58,11 @@ machine:
         WOOD: 1
     # This is the message that is sent to players who try to start machines that do not have fuel #
     fuelMessage: "&7The paving machine needs fuel in order to start."
+    # These are the sound effects that play when the machine does an action #
+    soundEffects:
+        turnOn: BLOCK_NOTE_HAT
+        turnOff: ENTITY_BLAZE_HURT
+        rotate: BLOCK_PISTON_CONTRACT
     # These are the materials that pavers will pave over #
     blockWhitelist:
         - AIR

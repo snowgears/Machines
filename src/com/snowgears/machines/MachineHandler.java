@@ -247,11 +247,11 @@ public class MachineHandler {
             this.addMachine(machine);
     }
 
-    private String locationToString(Location loc) {
+    public String locationToString(Location loc) {
         return loc.getWorld().getName() + "," + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ();
     }
 
-    private Location locationFromString(String locString) {
+    public Location locationFromString(String locString) {
         String[] parts = locString.split(",");
         return new Location(plugin.getServer().getWorld(parts[0]), Double.parseDouble(parts[1]), Double.parseDouble(parts[2]), Double.parseDouble(parts[3]));
     }

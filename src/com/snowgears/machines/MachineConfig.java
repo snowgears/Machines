@@ -3,6 +3,7 @@ package com.snowgears.machines;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -22,6 +23,9 @@ public class MachineConfig {
     protected HashMap<Material, Integer> fuelMap;
     protected String fuelMessage;
     protected int speed;
+    protected Sound soundActionOn;
+    protected Sound soundActionOff;
+    protected Sound soundActionRotate;
 
     public MachineConfig(File configFile){
         fuelMap = new HashMap<>();
@@ -73,6 +77,18 @@ public class MachineConfig {
 
     public int getSpeed(){
         return speed;
+    }
+
+    public Sound getSoundActionOn(){
+        return soundActionOn;
+    }
+
+    public Sound getSoundActionOff(){
+        return soundActionOff;
+    }
+
+    public Sound getSoundActionRotate(){
+        return soundActionRotate;
     }
 
     private void loadConfig(File configFile){
@@ -129,6 +145,10 @@ public class MachineConfig {
 
             fuelMessage = config.getString("machine.fuelMessage");
             fuelMessage = ChatColor.translateAlternateColorCodes('&', fuelMessage);
+
+            soundActionOn = Sound.valueOf(config.getString("machine.soundEffects.turnOn"));
+            soundActionOff = Sound.valueOf(config.getString("machine.soundEffects.turnOff"));
+            soundActionRotate = Sound.valueOf(config.getString("machine.soundEffects.rotate"));
         }
     }
 

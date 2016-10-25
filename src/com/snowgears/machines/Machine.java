@@ -29,6 +29,8 @@ public abstract class Machine {
     protected boolean onCooldown;
     protected int fuelPower;
 
+    //TODO make 1 or 2 constructors which you can call super() on from other machines
+
     public abstract boolean activate();
 
     public abstract boolean deactivate();

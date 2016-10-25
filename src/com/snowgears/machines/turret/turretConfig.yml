@@ -60,6 +60,11 @@ machine:
         WOOD: 10
     # This is the message that is sent to players who try to start machines that do not have fuel #
     fuelMessage: "&7The turret needs fuel in order to start."
+    # These are the sound effects that play when the machine does an action #
+    soundEffects:
+        turnOn: BLOCK_NOTE_HAT
+        turnOff: ENTITY_BLAZE_HURT
+        rotate: BLOCK_PISTON_CONTRACT
     # This is a list of (living) entity types that turrets will not target #
     entityBlacklist:
        - ARMOR_STAND

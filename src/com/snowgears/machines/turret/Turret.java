@@ -106,6 +106,7 @@ public class Turret extends Machine {
             }
         }, 0L, Machines.getPlugin().getTurretConfig().getSpeed());
 
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getTurretConfig().getSoundActionOn(), 1.0F, 1.0F);
         isActive = true;
         return false;
     }
@@ -120,6 +121,7 @@ public class Turret extends Machine {
         topLocation.getBlock().setType(Material.FURNACE);
         setFacing(facing);
 
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getTurretConfig().getSoundActionOff(), 0.5F, 1.0F);
         target = null;
         isActive = false;
         return false;
@@ -308,5 +310,11 @@ public class Turret extends Machine {
                 break;
         }
         return projectile;
+    }
+
+    @Override
+    public void rotate(){
+        super.rotate();
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getTurretConfig().getSoundActionRotate(), 1.0F, 1.0F);
     }
 }

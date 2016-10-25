@@ -84,6 +84,7 @@ public class Paver extends Machine {
             }
         }, 0L, Machines.getPlugin().getDrillConfig().getSpeed());
 
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getPaverConfig().getSoundActionOn(), 1.0F, 1.0F);
         isActive = true;
         return true;
     }
@@ -166,6 +167,7 @@ public class Paver extends Machine {
         Bukkit.getScheduler().cancelTask(taskID);
         this.setLever(false);
 
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getPaverConfig().getSoundActionOff(), 0.5F, 1.0F);
         isActive = false;
         return true;
     }
@@ -191,5 +193,11 @@ public class Paver extends Machine {
         leverBlock.setType(Material.LEVER);
         setDirectionOfLever(leverBlock, baseLocation.getBlock().getFace(leverBlock));
         return true;
+    }
+
+    @Override
+    public void rotate(){
+        super.rotate();
+        baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getPaverConfig().getSoundActionRotate(), 1.0F, 1.0F);
     }
 }

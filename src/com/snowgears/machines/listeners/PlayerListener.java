@@ -90,8 +90,17 @@ public class PlayerListener implements Listener{
                         return;
                 }
 
-                if(player.getGameMode() == GameMode.SURVIVAL)
-                    event.getItemInHand().setAmount(event.getItemInHand().getAmount()-1);
+                if(player.getGameMode() == GameMode.SURVIVAL) {
+                    int amt = player.getItemInHand().getAmount() - 1;
+                    if(amt == 0) {
+                        player.setItemInHand(new ItemStack(Material.AIR));
+                    }
+                    else {
+                        ItemStack oneLess = player.getItemInHand().clone();
+                        oneLess.setAmount(amt);
+                        player.setItemInHand(oneLess);
+                    }
+                }
 
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {
