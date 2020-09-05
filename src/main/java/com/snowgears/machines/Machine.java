@@ -7,8 +7,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Directional;
 import org.bukkit.material.Lever;
 
 import java.util.Iterator;
@@ -145,29 +147,22 @@ public abstract class Machine {
         return facing;
     }
 
-    @SuppressWarnings("deprecation")
     protected boolean setFacing(BlockFace direction){
         switch (direction) {
             case DOWN:
-                switchTopAndBottom((byte) 0); //switch top and bottom with top facing down ((byte)0 = Facing DOWN)
+                switchTopAndBottom(BlockFace.DOWN); //switch top and bottom with top facing down
                 break;
             case UP:
                 if (facing == BlockFace.DOWN)
-                    switchTopAndBottom((byte) 1); //switch top and bottom with top facing up ((byte)1 = Facing UP)
+                    switchTopAndBottom(BlockFace.UP); //switch top and bottom with top facing up
                 else
-                    topLocation.getBlock().setData((byte) 1);
+                    this.setBlockDirection(topLocation.getBlock(), direction);
                 break;
             case NORTH:
-                topLocation.getBlock().setData((byte) 2);
-                break;
             case SOUTH:
-                topLocation.getBlock().setData((byte) 3);
-                break;
             case WEST:
-                topLocation.getBlock().setData((byte) 4);
-                break;
             case EAST:
-                topLocation.getBlock().setData((byte) 5);
+                this.setBlockDirection(topLocation.getBlock(), direction);
                 break;
             default:
                 return false;
@@ -177,8 +172,17 @@ public abstract class Machine {
         return true;
     }
 
+    private void setBlockDirection(Block b, BlockFace direction){
+        BlockData data = b.getBlockData();
+        if(data instanceof Directional){
+            Directional dir = (Directional) data;
+            dir.setFacingDirection(direction);
+            b.setBlockData(data);
+        }
+    }
+
     @SuppressWarnings("deprecation")
-    protected boolean switchTopAndBottom(byte data){
+    protected boolean switchTopAndBottom(BlockFace facing){
         //make sure machine has room for new lever location first
         Location originalLever = leverLocation.clone();
         BlockFace leverFace = ((Lever)leverLocation.getBlock().getState().getData()).getAttachedFace();
@@ -191,8 +195,10 @@ public abstract class Machine {
         //switch top and bottom blocks of machine
         originalLever.getBlock().setType(Material.AIR);
         Material topMat = topLocation.getBlock().getType();
-        topLocation.getBlock().setTypeIdAndData(baseLocation.getBlock().getTypeId(), baseLocation.getBlock().getData(), true);
-        baseLocation.getBlock().setTypeIdAndData(topMat.getId(), data, true); //(byte)0 = Facing DOWN, (byte)1 = Facing UP
+        topLocation.getBlock().setType(baseLocation.getBlock().getType());
+        //baseLocation.getBlock().getData(), true); //TODO, used to also set the top location data. is this still necessary???
+        baseLocation.getBlock().setType(topMat); //, data, true); //(byte)0 = Facing DOWN, (byte)1 = Facing UP
+        this.setBlockDirection(baseLocation.getBlock(), facing);
         leverLocation.getBlock().setType(Material.LEVER);
 
         //remove machine, switch stored top and bottom locations, put machine back
