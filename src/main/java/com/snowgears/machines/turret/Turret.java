@@ -71,7 +71,7 @@ public class Turret extends Machine {
         this.setLever(true);
         spawnArmorStand();
         ((Furnace) topLocation.getBlock().getState()).setBurnTime(Short.MAX_VALUE);
-        topLocation.getBlock().setType(Material.BURNING_FURNACE);
+        topLocation.getBlock().setType(Material.FURNACE);
         setFacing(facing);
 
         //start the scanning task
@@ -275,7 +275,7 @@ public class Turret extends Machine {
             case ARROW:
                 projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.ARROW);
                 break;
-            case DRAGONS_BREATH:
+            case DRAGON_BREATH:
                 projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.DRAGON_FIREBALL);
                 break;
             case EGG:
@@ -284,14 +284,14 @@ public class Turret extends Machine {
             case ENDER_PEARL:
                 projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.ENDER_PEARL); //TODO should be fixed on 1.9.3
                 break;
-            case FIREBALL:
+            case FIRE_CHARGE:
                 projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.FIREBALL);
                 break;
             case LINGERING_POTION:
-                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.LINGERING_POTION);
-                ((LingeringPotion)projectile).setItem(itemStack);
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.SPLASH_POTION);
+                ((ThrownPotion)projectile).setItem(itemStack);
                 break;
-            case SNOW_BALL:
+            case SNOWBALL:
                 projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.SNOWBALL);
                 break;
             case SPECTRAL_ARROW:
@@ -299,14 +299,14 @@ public class Turret extends Machine {
                 break;
             case SPLASH_POTION:
                 projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.SPLASH_POTION);
-                ((SplashPotion)projectile).setItem(itemStack);
+                ((ThrownPotion)projectile).setItem(itemStack);
                 break;
-            case EXP_BOTTLE:
+            case EXPERIENCE_BOTTLE:
                 projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.THROWN_EXP_BOTTLE);
                 break;
             case TIPPED_ARROW:
-                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.TIPPED_ARROW);
-                ((TippedArrow)projectile).setBasePotionData(((PotionMeta)itemStack.getItemMeta()).getBasePotionData());
+                projectile = (Projectile)location.getWorld().spawnEntity(location, EntityType.ARROW);
+                ((Arrow)projectile).setBasePotionData(((PotionMeta)itemStack.getItemMeta()).getBasePotionData());
                 break;
         }
         return projectile;

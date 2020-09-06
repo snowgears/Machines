@@ -57,15 +57,15 @@ public class TurretConfig extends MachineConfig {
             //TODO in the future, maybe allow turrets to shoot items and get all of these from config
             projectileMaterials = new HashMap<>();
             projectileMaterials.put(Material.ARROW, true);
-            projectileMaterials.put(Material.DRAGONS_BREATH, true);
+            projectileMaterials.put(Material.DRAGON_BREATH, true);
             projectileMaterials.put(Material.EGG, true);
             projectileMaterials.put(Material.ENDER_PEARL, true);
-            projectileMaterials.put(Material.FIREBALL, true);
+            projectileMaterials.put(Material.FIRE_CHARGE, true);
             projectileMaterials.put(Material.LINGERING_POTION, true);
-            projectileMaterials.put(Material.SNOW_BALL, true);
+            projectileMaterials.put(Material.SNOWBALL, true);
             projectileMaterials.put(Material.SPECTRAL_ARROW, true);
             projectileMaterials.put(Material.SPLASH_POTION, true);
-            projectileMaterials.put(Material.EXP_BOTTLE, true);
+            projectileMaterials.put(Material.EXPERIENCE_BOTTLE, true);
             projectileMaterials.put(Material.TIPPED_ARROW, true);
         }
     }

@@ -54,13 +54,13 @@ machine:
         COAL: 10
         LAVA_BUCKET: 100
         BLAZE_ROD: 30
-        LOG: 4
-        WOOD: 1
+        LOGS: 4
+        PLANKS: 1
     # This is the message that is sent to players who try to start machines that do not have fuel #
     fuelMessage: "&7The paving machine needs fuel in order to start."
     # These are the sound effects that play when the machine does an action #
     soundEffects:
-        turnOn: BLOCK_NOTE_HAT
+        turnOn: BLOCK_NOTE_BLOCK_HAT
         turnOff: ENTITY_BLAZE_HURT
         rotate: BLOCK_PISTON_CONTRACT
     # These are the materials that pavers will pave over #
@@ -68,16 +68,12 @@ machine:
         - AIR
         - BROWN_MUSHROOM
         - DEAD_BUSH
-        - DOUBLE_PLANT
         - FIRE
         - LAVA
-        - LONG_GRASS
-        - RED_MUSHROOM
-        - RED_ROSE
-        - SAPLING
-        - SNOW
-        - STATIONARY_LAVA
-        - STATIONARY_WATER
-        - VINE
         - WATER
-        - YELLOW_FLOWER
+        - TALL_GRASS
+        - RED_MUSHROOM
+        - POPPY
+        - SNOW
+        - VINE
+        - DANDELION

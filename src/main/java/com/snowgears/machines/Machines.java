@@ -65,7 +65,7 @@ public class Machines extends JavaPlugin {
         File drillConfigFile = new File(getDataFolder(), "drillConfig.yml");
         if (!drillConfigFile.exists()) {
             drillConfigFile.getParentFile().mkdirs();
-            copy(getResource("com/snowgears/machines/drill/drillConfig.yml"), drillConfigFile);
+            copy(getResource("drillConfig.yml"), drillConfigFile);
         }
         drillConfig = new DrillConfig(drillConfigFile);
 
@@ -73,7 +73,7 @@ public class Machines extends JavaPlugin {
         File paverConfigFile = new File(getDataFolder(), "paverConfig.yml");
         if (!paverConfigFile.exists()) {
             paverConfigFile.getParentFile().mkdirs();
-            copy(getResource("com/snowgears/machines/paver/paverConfig.yml"), paverConfigFile);
+            copy(getResource("paverConfig.yml"), paverConfigFile);
         }
         paverConfig = new PaverConfig(paverConfigFile);
 
@@ -81,7 +81,7 @@ public class Machines extends JavaPlugin {
         File turretConfigFile = new File(getDataFolder(), "turretConfig.yml");
         if (!turretConfigFile.exists()) {
             turretConfigFile.getParentFile().mkdirs();
-            copy(getResource("com/snowgears/machines/turret/turretConfig.yml"), turretConfigFile);
+            copy(getResource("turretConfig.yml"), turretConfigFile);
         }
         turretConfig = new TurretConfig(turretConfigFile);
 
@@ -89,7 +89,7 @@ public class Machines extends JavaPlugin {
         File conveyerConfigFile = new File(getDataFolder(), "conveyerConfig.yml");
         if (!conveyerConfigFile.exists()) {
             conveyerConfigFile.getParentFile().mkdirs();
-            copy(getResource("com/snowgears/machines/conveyer/conveyerConfig.yml"), conveyerConfigFile);
+            copy(getResource("conveyerConfig.yml"), conveyerConfigFile);
         }
         conveyerConfig = new ConveyerConfig(conveyerConfigFile);
 

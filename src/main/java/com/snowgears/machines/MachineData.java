@@ -66,21 +66,23 @@ public class MachineData {
 
     private void initMaterialsIgnored(){
         materialsIgnored.put(Material.AIR, true);
-        materialsIgnored.put(Material.SAPLING, true);
+        materialsIgnored.put(Material.ACACIA_SAPLING, true);
+        materialsIgnored.put(Material.BAMBOO_SAPLING, true);
+        materialsIgnored.put(Material.BIRCH_SAPLING, true);
+        materialsIgnored.put(Material.DARK_OAK_SAPLING, true);
+        materialsIgnored.put(Material.JUNGLE_SAPLING, true);
+        materialsIgnored.put(Material.OAK_SAPLING, true);
         materialsIgnored.put(Material.WATER, true);
-        materialsIgnored.put(Material.STATIONARY_WATER, true);
         materialsIgnored.put(Material.LAVA, true);
-        materialsIgnored.put(Material.STATIONARY_LAVA, true);
-        materialsIgnored.put(Material.LONG_GRASS, true);
+        materialsIgnored.put(Material.TALL_GRASS, true);
         materialsIgnored.put(Material.DEAD_BUSH, true);
-        materialsIgnored.put(Material.YELLOW_FLOWER, true);
-        materialsIgnored.put(Material.RED_ROSE, true);
+        materialsIgnored.put(Material.DANDELION, true);
+        materialsIgnored.put(Material.POPPY, true);
         materialsIgnored.put(Material.BROWN_MUSHROOM, true);
         materialsIgnored.put(Material.RED_MUSHROOM, true);
         materialsIgnored.put(Material.FIRE, true);
         materialsIgnored.put(Material.SNOW, true);
         materialsIgnored.put(Material.VINE, true);
-        materialsIgnored.put(Material.DOUBLE_PLANT, true);
     }
 
     private void initMachineItems(){
@@ -136,7 +138,7 @@ public class MachineData {
                 .setIngredient('B', Material.BEACON)
                 .setIngredient('F', Material.FURNACE)
                 .setIngredient('P', Material.ENDER_PEARL)
-                .setIngredient('E', Material.ENDER_STONE);
+                .setIngredient('E', Material.END_STONE);
         plugin.getServer().addRecipe(gravityRecipe);
 
         //pump

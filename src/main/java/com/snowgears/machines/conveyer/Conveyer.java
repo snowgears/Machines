@@ -208,28 +208,7 @@ public class Conveyer extends Machine {
         }
     }
 
-    @Override
-    protected boolean setFacing(BlockFace direction){
-        //this is necessary because stairs have different data values for directions than other blocks
-        switch (direction) {
-            case NORTH:
-                topLocation.getBlock().setData((byte) 3);
-                break;
-            case SOUTH:
-                topLocation.getBlock().setData((byte) 2);
-                break;
-            case WEST:
-                topLocation.getBlock().setData((byte) 1);
-                break;
-            case EAST:
-                topLocation.getBlock().setData((byte) 0);
-                break;
-            default:
-                return false;
-        }
-        facing = direction;
-        return true;
-    }
+    //TODO may need to have setDirection method be overridden because of stairs
 
     @Override
     public void rotate(){

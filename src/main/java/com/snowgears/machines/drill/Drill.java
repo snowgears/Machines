@@ -134,7 +134,7 @@ public class Drill extends Machine {
 
         //fill empty buckets with water/lava if turned on in settings
         if(Machines.getPlugin().getDrillConfig().fillBuckets()){
-            if(taskBlock.getType() == Material.WATER || taskBlock.getType() == Material.STATIONARY_WATER) {
+            if(taskBlock.getType() == Material.WATER) {
                 int underflow = InventoryUtils.removeItem(this.getInventory(), new ItemStack(Material.BUCKET));
                 //a bucket was able to be removed
                 if (underflow == 0) {
@@ -145,7 +145,7 @@ public class Drill extends Machine {
                     }
                 }
             }
-            else if(taskBlock.getType() == Material.LAVA || taskBlock.getType() == Material.STATIONARY_LAVA) {
+            else if(taskBlock.getType() == Material.LAVA) {
                 int underflow = InventoryUtils.removeItem(this.getInventory(), new ItemStack(Material.BUCKET));
                 //a bucket was able to be removed
                 if (underflow == 0) {
@@ -176,13 +176,19 @@ public class Drill extends Machine {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean create() {
         if(leverLocation == null)
             return false;
         Material previousMaterial = this.topLocation.getBlock().getType();
-        this.topLocation.getBlock().setType(Material.PISTON_BASE);
-        this.topLocation.getBlock().setData((byte)0); //piston:BlockFace.DOWN
+        this.topLocation.getBlock().setType(Material.PISTON);
+//        Machines.getPlugin().getServer().getScheduler().runTaskLater(Machines.getPlugin(), new Runnable() {
+//            @Override
+//            public void run() {
+//                setBlockDirection(topLocation.getBlock(), BlockFace.DOWN);
+//            }
+//        }, 2); //going to have to run task 2 ticks later?
+        setBlockDirection(topLocation.getBlock(), BlockFace.DOWN);
+
 
         //before building top block, check that the location is clear
         if(Machines.getPlugin().getMachineData().isIgnoredMaterial(baseLocation.getBlock().getType())) {

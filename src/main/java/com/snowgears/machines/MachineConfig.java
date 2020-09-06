@@ -1,9 +1,6 @@
 package com.snowgears.machines;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -138,9 +135,21 @@ public class MachineConfig {
             //populate fuel types
             Set<String> fuelTypeStrings = config.getConfigurationSection("machine.fuelTypes").getKeys(true);
             for (String s : fuelTypeStrings) {
-                Material m = Material.valueOf(s);
                 int power = config.getInt("machine.fuelTypes." + s);
-                fuelMap.put(m, power);
+                if(s.equals("LOGS")){
+                    for(Material m : Tag.LOGS.getValues()){
+                        fuelMap.put(m, power);
+                    }
+                }
+                else if(s.equals("PLANKS")){
+                    for(Material m : Tag.PLANKS.getValues()){
+                        fuelMap.put(m, power);
+                    }
+                }
+                else {
+                    Material m = Material.valueOf(s);
+                    fuelMap.put(m, power);
+                }
             }
 
             fuelMessage = config.getString("machine.fuelMessage");

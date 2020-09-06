@@ -62,8 +62,7 @@ public class Pump extends Machine {
     public boolean create() {
         if(leverLocation == null)
             return false;
-        this.baseLocation.getBlock().setType(Material.SPONGE);
-        this.baseLocation.getBlock().setData((byte)1); //sponge:WET
+        this.baseLocation.getBlock().setType(Material.WET_SPONGE);
 
         //before building top block, check that the location is clear
         if(Machines.getPlugin().getMachineData().isIgnoredMaterial(topLocation.getBlock().getType())) {

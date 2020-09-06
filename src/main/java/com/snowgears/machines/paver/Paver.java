@@ -149,7 +149,7 @@ public class Paver extends Machine {
                     if(takeSlot < 0)
                         takeSlot = inventory.getSize()-3;
                     inventory.setItem(takeSlot, paveItem);
-                    taskBlock.setTypeIdAndData(paveItem.getType().getId(), paveItem.getData().getData(), true);
+                    taskBlock.setType(paveItem.getType()); //, paveItem.getData().getData(), true); //used to set data also. may come back to this
                     //simulate an added block with particle effect (after adding)
                     taskBlock.getWorld().playEffect(taskBlock.getLocation(), Effect.STEP_SOUND, taskBlock.getType());
                     return true;
@@ -179,7 +179,7 @@ public class Paver extends Machine {
             return false;
         Material previousMaterial = this.topLocation.getBlock().getType();
         this.topLocation.getBlock().setType(Material.DISPENSER);
-        this.topLocation.getBlock().setData((byte)0); //facing down
+        this.setBlockDirection(this.topLocation.getBlock(), BlockFace.DOWN);
 
         //before building top block, check that the location is clear
         if (Machines.getPlugin().getMachineData().isIgnoredMaterial(baseLocation.getBlock().getType())) {

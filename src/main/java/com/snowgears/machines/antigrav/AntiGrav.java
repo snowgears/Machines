@@ -60,7 +60,7 @@ public class AntiGrav extends Machine {
     public boolean create() {
         if(leverLocation == null)
             return false;
-        this.baseLocation.getBlock().setType(Material.ENDER_STONE);
+        this.baseLocation.getBlock().setType(Material.END_STONE);
 
         //before building top block, check that the location is clear
         if(Machines.getPlugin().getMachineData().isIgnoredMaterial(topLocation.getBlock().getType())) {

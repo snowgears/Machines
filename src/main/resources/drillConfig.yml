@@ -33,7 +33,7 @@ machine:
         rows: 1
     # This is used to set the drill item information #
     item:
-        type: 'PISTON_BASE'
+        type: 'PISTON'
         name: '&6Drill'
         lore:
             - "&f&o'It looks very old and heavy'"
@@ -43,7 +43,7 @@ machine:
         shape: ['RPR', 'RFR', 'IOI']
         mapping:
             R: 'BLAZE_ROD'
-            P: 'PISTON_BASE'
+            P: 'PISTON'
             F: 'FURNACE'
             I: 'IRON_PICKAXE'
             O: 'OBSIDIAN'
@@ -56,40 +56,32 @@ machine:
         COAL: 10
         LAVA_BUCKET: 100
         BLAZE_ROD: 30
-        LOG: 4
-        WOOD: 1
+        LOGS: 4
+        PLANKS: 1
     # This is the message that is sent to players who try to start machines that do not have fuel #
     fuelMessage: "&7The drill needs fuel in order to start."
     # These are the sound effects that play when the machine does an action #
     soundEffects:
-        turnOn: BLOCK_NOTE_HAT
+        turnOn: BLOCK_NOTE_BLOCK_HAT
         turnOff: ENTITY_BLAZE_HURT
         rotate: BLOCK_PISTON_CONTRACT
     # These are the materials that drills cannot break, and will halt when running into them #
     blockBlacklist:
         - ARMOR_STAND
-        - BANNER
         - BARRIER
         - BEACON
-        - BED_BLOCK
+        - RED_BED
         - BREWING_STAND
         - BEDROCK
-        - BURNING_FURNACE
-        - COMMAND
+        - COMMAND_BLOCK
         - CHEST
         - DISPENSER
         - DROPPER
-        - ENCHANTMENT_TABLE
+        - ENCHANTING_TABLE
         - ENDER_CHEST
         - FURNACE
-        - PISTON_BASE
-        - PISTON_EXTENSION
-        - PISTON_MOVING_PIECE
-        - PISTON_STICKY_BASE
-        - SIGN
-        - SIGN_POST
-        - SKULL
-        - STANDING_BANNER
+        - PISTON
+        - PISTON_HEAD
+        - MOVING_PISTON
+        - STICKY_PISTON
         - TRAPPED_CHEST
-        - WALL_BANNER
-        - WALL_SIGN

@@ -1,17 +1,12 @@
 package com.snowgears.machines;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.*;
+import org.bukkit.block.data.type.Switch;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Directional;
-import org.bukkit.material.Lever;
 
 import java.util.Iterator;
 import java.util.UUID;
@@ -172,25 +167,53 @@ public abstract class Machine {
         return true;
     }
 
-    private void setBlockDirection(Block b, BlockFace direction){
-        BlockData data = b.getBlockData();
-        if(data instanceof Directional){
-            Directional dir = (Directional) data;
-            dir.setFacingDirection(direction);
-            b.setBlockData(data);
+    protected void setBlockDirection(Block block, BlockFace direction){
+        BlockData blockData = block.getBlockData();
+        if (blockData instanceof Directional) {
+            ((Directional) blockData).setFacing(direction);
+            block.setBlockData(blockData);
+        }
+        else if (blockData instanceof Orientable) {
+            ((Orientable) blockData).setAxis(convertBlockFaceToAxis(direction));
+            block.setBlockData(blockData);
+        }
+        else if (blockData instanceof Rotatable) {
+            ((Rotatable) blockData).setRotation(direction);
+            block.setBlockData(blockData);
         }
     }
 
-    @SuppressWarnings("deprecation")
+    private Axis convertBlockFaceToAxis(BlockFace face) {
+        switch (face) {
+            case NORTH:
+            case SOUTH:
+                return Axis.Z;
+            case EAST:
+            case WEST:
+                return Axis.X;
+            case UP:
+            case DOWN:
+                return Axis.Y;
+            default:
+                return Axis.X;
+        }
+    }
+
     protected boolean switchTopAndBottom(BlockFace facing){
         //make sure machine has room for new lever location first
         Location originalLever = leverLocation.clone();
-        BlockFace leverFace = ((Lever)leverLocation.getBlock().getState().getData()).getAttachedFace();
-        boolean hasRoom = this.calculateLeverLocation(topLocation, leverFace);
-        if(!hasRoom){
-            leverLocation = originalLever;
-            return false;
+        Block leverBlock = leverLocation.getBlock();
+        if(leverBlock.getBlockData() instanceof Switch){
+            BlockFace leverFace = ((Switch)leverLocation.getBlock().getBlockData()).getFacing().getOppositeFace();
+            boolean hasRoom = this.calculateLeverLocation(topLocation, leverFace);
+            if(!hasRoom){
+                leverLocation = originalLever;
+                return false;
+            }
         }
+        else
+            return false;
+
 
         //switch top and bottom blocks of machine
         originalLever.getBlock().setType(Material.AIR);
@@ -254,47 +277,24 @@ public abstract class Machine {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     protected void setDirectionOfLever(Block lever, BlockFace face){
-        switch(face) {
-            case NORTH:
-                lever.setData((byte) 4);
-                break;
-            case EAST:
-                lever.setData((byte) 1);
-                break;
-            case SOUTH:
-                lever.setData((byte) 3);
-                break;
-            case WEST:
-                lever.setData((byte) 2);
-                break;
-            default:
-                return;
+        if(lever.getBlockData() instanceof Switch){
+            Switch leverSwitch = (Switch)lever.getBlockData();
+            leverSwitch.setAttachedFace(FaceAttachable.AttachedFace.WALL);
+            leverSwitch.setFacing(face);
+            lever.setBlockData(leverSwitch);
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected void setLever(boolean on) {
         Block leverBlock = leverLocation.getBlock();
-        Lever lever = null;
-        if(leverBlock.getType() == Material.LEVER)
-            lever = (Lever) leverBlock.getState().getData();
-        else
+        if(!(leverBlock.getBlockData() instanceof Switch))
             return;
 
-        //this flips the lever
-        lever.setPowered(on);
-        leverBlock.setData(lever.getData(), true);
+        Switch leverSwitch = (Switch)leverBlock.getBlockData();
+        leverSwitch.setPowered(on);
         leverOn = on;
-
-        //hacky fix for state not updating bug
-        Block supportBlock = leverBlock.getRelative(lever.getAttachedFace());
-        BlockState initialSupportState = supportBlock.getState();
-        BlockState supportState = supportBlock.getState();
-        supportState.setType(Material.AIR);
-        supportState.update(true, false);
-        initialSupportState.update(true);
+        leverBlock.setBlockData(leverSwitch);
     }
 
     protected void toggleLever() {

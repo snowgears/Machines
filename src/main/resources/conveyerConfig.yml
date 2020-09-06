@@ -57,9 +57,9 @@ machine:
             - "&f&o'Fits into a conveyer machine'"
     # This controls the recipe to craft conveyer belts #
     beltCrafting:
-        shape: [' W ', ' R ']
+        shape: [' O ', ' R ']
         mapping:
-            W: 'WOOD'
+            O: 'OBSIDIAN'
             R: 'REDSTONE'
         yield: 1
 
@@ -68,8 +68,8 @@ machine:
         COAL: 60
         LAVA_BUCKET: 600
         BLAZE_ROD: 120
-        LOG: 20
-        WOOD: 10
+        LOGS: 20
+        PLANKS: 10
     # This is the maximum number of blocks away from the machine that a conveyer will push entities on its belt #
     # Increasing this number may put more stress on the server resources #
     maxDistance: 20
@@ -78,7 +78,7 @@ machine:
     # This is a list of entity types that conveyers will not push #
     # These are the sound effects that play when the machine does an action #
     soundEffects:
-        turnOn: BLOCK_NOTE_HAT
+        turnOn: BLOCK_NOTE_BLOCK_HAT
         turnOff: ENTITY_BLAZE_HURT
         rotate: BLOCK_PISTON_CONTRACT
     entityBlacklist:

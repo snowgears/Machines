@@ -42,7 +42,7 @@ public class MachineHandler {
         Block block = loc.getBlock();
 
         //make sure if getting by a piston extension piece, the base is checked instead
-        if(block.getType() == Material.PISTON_EXTENSION){
+        if(block.getType() == Material.PISTON_HEAD){
             PistonExtensionMaterial pistonEnd = (PistonExtensionMaterial)block.getState().getData();
             loc = block.getRelative(pistonEnd.getAttachedFace()).getLocation();
         }

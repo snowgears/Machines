@@ -246,7 +246,7 @@ public class PlayerListener implements Listener{
     public void onFuelBarrierClick(InventoryClickEvent event){
         if(event.getSlotType() == InventoryType.SlotType.CONTAINER){
             ItemStack is = event.getCurrentItem();
-            if(is.getType() == Material.BARRIER){
+            if(is != null && is.getType() == Material.BARRIER){
                 if(is.getItemMeta().getDisplayName() != null && is.getItemMeta().getDisplayName().equals(" "))
                     event.setCancelled(true);
             }
