@@ -95,6 +95,9 @@ public class Turret extends Machine {
                     return;
                 }
 
+                //play sound to let player know machine is on and scanning
+                playWorkSound();
+
                 scanForTarget();
             }
         }, 0L, 20L); //scan every 20 ticks (1 second)
@@ -120,6 +123,7 @@ public class Turret extends Machine {
             armorStand.remove();
         topLocation.getBlock().setType(Material.FURNACE);
         setFacing(facing);
+        workSoundVariant = false;
 
         baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getTurretConfig().getSoundActionOff(), 0.5F, 1.0F);
         target = null;

@@ -99,6 +99,9 @@ public class Conveyer extends Machine {
                     return;
                 }
 
+                //play sound to let player know the conveyer is working
+                playWorkSound();
+
                 scanForEntities();
             }
         }, 0L, 40L); //scan every 2 seconds
@@ -123,6 +126,7 @@ public class Conveyer extends Machine {
 
         entitiesOnBelt.clear();
 
+        workSoundVariant = false;
         baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getConveyerConfig().getSoundActionOff(), 0.5F, 1.0F);
         isActive = false;
         return false;

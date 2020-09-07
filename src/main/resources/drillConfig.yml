@@ -54,6 +54,7 @@ machine:
     # The number represents how many blocks the machine will mine per fuel #
     fuelTypes:
         COAL: 10
+        CHARCOAL: 10
         LAVA_BUCKET: 100
         BLAZE_ROD: 30
         LOGS: 4
@@ -65,6 +66,8 @@ machine:
         turnOn: BLOCK_NOTE_BLOCK_HAT
         turnOff: ENTITY_BLAZE_HURT
         rotate: BLOCK_PISTON_CONTRACT
+        work1: BLOCK_PISTON_EXTEND
+        work2: BLOCK_PISTON_CONTRACT
     # These are the materials that drills cannot break, and will halt when running into them #
     blockBlacklist:
         - ARMOR_STAND

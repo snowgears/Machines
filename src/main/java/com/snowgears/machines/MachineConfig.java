@@ -23,6 +23,8 @@ public class MachineConfig {
     protected Sound soundActionOn;
     protected Sound soundActionOff;
     protected Sound soundActionRotate;
+    protected Sound soundActionWork1;
+    protected Sound soundActionWork2;
 
     public MachineConfig(File configFile){
         fuelMap = new HashMap<>();
@@ -86,6 +88,14 @@ public class MachineConfig {
 
     public Sound getSoundActionRotate(){
         return soundActionRotate;
+    }
+
+    public Sound getSoundActionWork1(){
+        return soundActionWork1;
+    }
+
+    public Sound getSoundActionWork2(){
+        return soundActionWork2;
     }
 
     private void loadConfig(File configFile){
@@ -158,6 +168,8 @@ public class MachineConfig {
             soundActionOn = Sound.valueOf(config.getString("machine.soundEffects.turnOn"));
             soundActionOff = Sound.valueOf(config.getString("machine.soundEffects.turnOff"));
             soundActionRotate = Sound.valueOf(config.getString("machine.soundEffects.rotate"));
+            soundActionWork1 = Sound.valueOf(config.getString("machine.soundEffects.work1"));
+            soundActionWork2 = Sound.valueOf(config.getString("machine.soundEffects.work2"));
         }
     }
 

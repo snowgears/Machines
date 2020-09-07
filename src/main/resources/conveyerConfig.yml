@@ -66,6 +66,7 @@ machine:
     # The number represents how many seconds the conveyer will stay active per fuel #
     fuelTypes:
         COAL: 60
+        CHARCOAL: 60
         LAVA_BUCKET: 600
         BLAZE_ROD: 120
         LOGS: 20
@@ -81,5 +82,7 @@ machine:
         turnOn: BLOCK_NOTE_BLOCK_HAT
         turnOff: ENTITY_BLAZE_HURT
         rotate: BLOCK_PISTON_CONTRACT
+        work1: BLOCK_PISTON_EXTEND
+        work2: BLOCK_PISTON_CONTRACT
     entityBlacklist:
        - WOLF

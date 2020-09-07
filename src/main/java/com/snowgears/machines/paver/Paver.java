@@ -76,7 +76,8 @@ public class Paver extends Machine {
                         deactivate();
                         return;
                     }
-                    toggleLever();
+                    playWorkSound();
+
                     taskBlock.getWorld().playEffect(topLocation, Effect.SMOKE, 4);
                     taskBlock = taskBlock.getRelative(getFacing());
                 } else
@@ -84,6 +85,7 @@ public class Paver extends Machine {
             }
         }, 0L, Machines.getPlugin().getDrillConfig().getSpeed());
 
+        toggleLever();
         baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getPaverConfig().getSoundActionOn(), 1.0F, 1.0F);
         isActive = true;
         return true;
@@ -166,6 +168,7 @@ public class Paver extends Machine {
     public boolean deactivate() {
         Bukkit.getScheduler().cancelTask(taskID);
         this.setLever(false);
+        workSoundVariant = false;
 
         baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getPaverConfig().getSoundActionOff(), 0.5F, 1.0F);
         isActive = false;

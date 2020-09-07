@@ -25,6 +25,7 @@ public abstract class Machine {
     protected boolean leverOn;
     protected boolean onCooldown;
     protected int fuelPower;
+    protected boolean workSoundVariant;
 
     //TODO make 1 or 2 constructors which you can call super() on from other machines
 
@@ -299,6 +300,16 @@ public abstract class Machine {
 
     protected void toggleLever() {
         setLever(!leverOn);
+    }
+
+    protected void playWorkSound(){
+        Sound sound;
+        if(workSoundVariant)
+            sound = Machines.getPlugin().getMachineConfig(this).getSoundActionWork1();
+        else
+            sound = Machines.getPlugin().getMachineConfig(this).getSoundActionWork2();
+        topLocation.getWorld().playSound(topLocation, sound, 1.0F, 1.0F);
+        workSoundVariant = !workSoundVariant;
     }
 
 }

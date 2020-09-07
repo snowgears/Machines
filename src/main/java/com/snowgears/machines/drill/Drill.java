@@ -73,7 +73,9 @@ public class Drill extends Machine {
                 int fuelCheck = fuelCheck(false);
                 if(fuelCheck > 0) {
                     gatherMaterial();
-                    toggleLever();
+                    //play piston sound instead of extending piston to help server lag
+                    playWorkSound();
+
                     taskBlock.getWorld().playEffect(topLocation, Effect.SMOKE, 4);
                     taskBlock = taskBlock.getRelative(getFacing());
                 }
@@ -83,6 +85,7 @@ public class Drill extends Machine {
         }, 0L, Machines.getPlugin().getDrillConfig().getSpeed());
 
         isActive = true;
+        toggleLever(); //only toggle lever once
         baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getDrillConfig().getSoundActionOn(), 1.0F, 1.0F);
 
         return true;
@@ -168,8 +171,9 @@ public class Drill extends Machine {
     public boolean deactivate() {
         Bukkit.getScheduler().cancelTask(taskID);
         this.setLever(false);
-
+        //this.togglePiston(true);
         //cancel all tasks
+        workSoundVariant = false;
         isActive = false;
         baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getDrillConfig().getSoundActionOff(), 0.5F, 1.0F);
         return true;
@@ -209,5 +213,14 @@ public class Drill extends Machine {
     public void rotate(){
         super.rotate();
         baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getDrillConfig().getSoundActionRotate(), 1.0F, 1.0F);
+    }
+
+    @Override
+    protected void playWorkSound(){
+        if(workSoundVariant)
+            Machines.getPlugin().getMachineConfig(this).getSoundActionWork1();
+        else
+            Machines.getPlugin().getMachineConfig(this).getSoundActionWork2();
+        workSoundVariant = !workSoundVariant;
     }
 }

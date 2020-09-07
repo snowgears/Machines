@@ -54,6 +54,7 @@ machine:
     # The number represents how many seconds the turret will stay active per fuel #
     fuelTypes:
         COAL: 60
+        CHARCOAL: 60
         LAVA_BUCKET: 600
         BLAZE_ROD: 120
         LOGS: 20
@@ -65,6 +66,8 @@ machine:
         turnOn: BLOCK_NOTE_BLOCK_HAT
         turnOff: ENTITY_BLAZE_HURT
         rotate: BLOCK_PISTON_CONTRACT
+        work1: ENTITY_PUFFER_FISH_DEATH
+        work2: ENTITY_PUFFER_FISH_DEATH
     # This is a list of (living) entity types that turrets will not target #
     entityBlacklist:
        - ARMOR_STAND
