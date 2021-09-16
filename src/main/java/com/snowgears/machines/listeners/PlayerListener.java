@@ -30,16 +30,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 public class PlayerListener implements Listener{
 
-    public Machines plugin = Machines.getPlugin();
-    private HashMap<String, Long> interactEventTick = new HashMap<>();
+    public Machines plugin;
 
     public PlayerListener(Machines instance) {
         plugin = instance;
@@ -167,20 +166,16 @@ public class PlayerListener implements Listener{
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockClick(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-
-        //must check the time between this and last interact event since it is thrown twice in MC 1.9
-        long tickCheck = System.currentTimeMillis();
-        if(interactEventTick.containsKey(player.getName())) {
-            if (tickCheck - interactEventTick.get(player.getName()) < 10) {
-                event.setCancelled(true);
-            }
-        }
-        interactEventTick.put(player.getName(), tickCheck);
-
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
+        try {
+            if (event.getHand() == EquipmentSlot.OFF_HAND) {
+                return; // off hand version, ignore.
+            }
+        } catch (NoSuchMethodError error) {}
 
+        Player player = event.getPlayer();
         if(event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK){
             Location clicked = event.getClickedBlock().getLocation();
 

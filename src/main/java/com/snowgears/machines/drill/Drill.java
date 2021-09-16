@@ -214,13 +214,4 @@ public class Drill extends Machine {
         super.rotate();
         baseLocation.getWorld().playSound(baseLocation, Machines.getPlugin().getDrillConfig().getSoundActionRotate(), 1.0F, 1.0F);
     }
-
-    @Override
-    protected void playWorkSound(){
-        if(workSoundVariant)
-            Machines.getPlugin().getMachineConfig(this).getSoundActionWork1();
-        else
-            Machines.getPlugin().getMachineConfig(this).getSoundActionWork2();
-        workSoundVariant = !workSoundVariant;
-    }
 }
